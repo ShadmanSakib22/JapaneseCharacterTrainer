@@ -1,40 +1,58 @@
-'use client';
-
-import { Suspense, useState, useMemo, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { hiragana, hiraganaGroups, type HiraganaGroup } from '../../../data/hiragana';
-import { katakana, katakanaGroups, type KatakanaGroup } from '../../../data/katakana';
-import { getGroupDisplayName, shuffleArray } from '../../../lib/utils';
+"use client";
+// src/app/practice/select/page.tsx
+import { Suspense, useState, useMemo, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import {
+  hiragana,
+  hiraganaGroups,
+  type HiraganaGroup,
+} from "../../../data/hiragana";
+import {
+  katakana,
+  katakanaGroups,
+  type KatakanaGroup,
+} from "../../../data/katakana";
+import { getGroupDisplayName, shuffleArray } from "../../../lib/utils";
 
 function SelectContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const mode = searchParams.get('mode') as 'hiragana' | 'katakana' | 'mixed' | null;
+  const mode = searchParams.get("mode") as
+    | "hiragana"
+    | "katakana"
+    | "mixed"
+    | null;
 
   const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
-  const [selectType, setSelectType] = useState<'groups' | 'characters' | 'all'>('groups');
+  const [selectType, setSelectType] = useState<"groups" | "characters" | "all">(
+    "groups",
+  );
 
-  const characters = mode === 'katakana' 
-    ? katakana 
-    : mode === 'mixed'
-      ? [...hiragana, ...katakana]
-      : hiragana;
-  
-  const groups = mode === 'katakana' 
-    ? katakanaGroups 
-    : mode === 'mixed'
-      ? [...new Set([...hiraganaGroups, ...katakanaGroups])] as readonly string[]
-      : hiraganaGroups;
+  const characters =
+    mode === "katakana"
+      ? katakana
+      : mode === "mixed"
+        ? [...hiragana, ...katakana]
+        : hiragana;
+
+  const groups =
+    mode === "katakana"
+      ? katakanaGroups
+      : mode === "mixed"
+        ? ([
+            ...new Set([...hiraganaGroups, ...katakanaGroups]),
+          ] as readonly string[])
+        : hiraganaGroups;
 
   useEffect(() => {
     if (!mode) {
-      router.push('/practice');
+      router.push("/practice");
     }
   }, [mode, router]);
 
   const availableCharacters = useMemo(() => {
-    if (selectType === 'all' || selectType === 'characters') {
+    if (selectType === "all" || selectType === "characters") {
       return characters;
     }
     return characters.filter((c) => selectedGroups.has(c.group));
@@ -63,8 +81,8 @@ function SelectContent() {
     const shuffled = shuffleArray(selectedChars);
 
     const params = new URLSearchParams();
-    params.set('mode', mode!);
-    params.set('characters', JSON.stringify(shuffled.map((c) => c.char)));
+    params.set("mode", mode!);
+    params.set("characters", JSON.stringify(shuffled.map((c) => c.char)));
 
     router.push(`/practice/play?${params.toString()}`);
   };
@@ -82,32 +100,37 @@ function SelectContent() {
       </Link>
 
       <h1 className="text-3xl font-bold mb-2">
-        {mode === 'hiragana' ? 'Hiragana' : mode === 'katakana' ? 'Katakana' : 'Hiragana + Katakana'} Practice
+        {mode === "hiragana"
+          ? "Hiragana"
+          : mode === "katakana"
+            ? "Katakana"
+            : "Hiragana + Katakana"}{" "}
+        Practice
       </h1>
       <p className="text-base-content/70 mb-6">Select your practice scope</p>
 
       <div className="flex gap-4 mb-6">
         <button
-          onClick={() => setSelectType('groups')}
-          className={`btn ${selectType === 'groups' ? 'btn-primary' : 'btn-outline'}`}
+          onClick={() => setSelectType("groups")}
+          className={`btn ${selectType === "groups" ? "btn-primary" : "btn-outline"}`}
         >
           Select Groups
         </button>
         <button
-          onClick={() => setSelectType('characters')}
-          className={`btn ${selectType === 'characters' ? 'btn-primary' : 'btn-outline'}`}
+          onClick={() => setSelectType("characters")}
+          className={`btn ${selectType === "characters" ? "btn-primary" : "btn-outline"}`}
         >
           Select Characters
         </button>
         <button
-          onClick={() => setSelectType('all')}
-          className={`btn ${selectType === 'all' ? 'btn-primary' : 'btn-outline'}`}
+          onClick={() => setSelectType("all")}
+          className={`btn ${selectType === "all" ? "btn-primary" : "btn-outline"}`}
         >
           All
         </button>
       </div>
 
-      {selectType === 'groups' && (
+      {selectType === "groups" && (
         <div className="mb-6">
           <div className="flex gap-2 mb-4">
             <button onClick={selectAll} className="btn btn-sm btn-secondary">
@@ -124,8 +147,8 @@ function SelectContent() {
                 key={group}
                 className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-all ${
                   selectedGroups.has(group)
-                    ? 'border-primary bg-primary/10'
-                    : 'border-base-300 hover:border-primary/50'
+                    ? "border-primary bg-primary/10"
+                    : "border-base-300 hover:border-primary/50"
                 }`}
               >
                 <input
@@ -134,14 +157,23 @@ function SelectContent() {
                   onChange={() => toggleGroup(group)}
                   className="checkbox checkbox-primary"
                 />
-                <span className="text-sm">{getGroupDisplayName(group, mode === 'katakana' ? 'katakana' : mode === 'mixed' ? 'mixed' : 'hiragana')}</span>
+                <span className="text-sm">
+                  {getGroupDisplayName(
+                    group,
+                    mode === "katakana"
+                      ? "katakana"
+                      : mode === "mixed"
+                        ? "mixed"
+                        : "hiragana",
+                  )}
+                </span>
               </label>
             ))}
           </div>
         </div>
       )}
 
-      {selectType === 'characters' && (
+      {selectType === "characters" && (
         <div className="mb-6">
           <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
             {characters.map((char) => (
@@ -149,8 +181,8 @@ function SelectContent() {
                 key={char.char}
                 className={`flex flex-col items-center p-2 rounded-lg border-2 cursor-pointer transition-all ${
                   selectedGroups.has(char.char)
-                    ? 'border-primary bg-primary/10'
-                    : 'border-base-300 hover:border-primary/50'
+                    ? "border-primary bg-primary/10"
+                    : "border-base-300 hover:border-primary/50"
                 }`}
               >
                 <input
@@ -184,7 +216,13 @@ function SelectContent() {
 
 export default function SelectPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
       <SelectContent />
     </Suspense>
   );

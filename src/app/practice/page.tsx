@@ -1,9 +1,9 @@
-'use client';
+"use client";
+// src/app/practice/page.tsx
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-type PracticeMode = 'hiragana' | 'katakana' | 'mixed' | 'kanji';
+type PracticeMode = "hiragana" | "katakana" | "mixed" | "kanji";
 
 export default function PracticePage() {
   const router = useRouter();
@@ -21,11 +21,11 @@ export default function PracticePage() {
 
       <div className="flex gap-6 mb-8">
         <button
-          onClick={() => setSelectedMode('hiragana')}
+          onClick={() => setSelectedMode("hiragana")}
           className={`w-64 h-48 rounded-2xl border-4 transition-all cursor-pointer flex flex-col items-center justify-center gap-4 ${
-            selectedMode === 'hiragana'
-              ? 'border-primary bg-primary/10 scale-105'
-              : 'border-base-300 hover:border-primary/50'
+            selectedMode === "hiragana"
+              ? "border-primary bg-primary/10 scale-105"
+              : "border-base-300 hover:border-primary/50"
           }`}
         >
           <span className="text-6xl">あ</span>
@@ -33,11 +33,11 @@ export default function PracticePage() {
         </button>
 
         <button
-          onClick={() => setSelectedMode('katakana')}
+          onClick={() => setSelectedMode("katakana")}
           className={`w-64 h-48 rounded-2xl border-4 transition-all cursor-pointer flex flex-col items-center justify-center gap-4 ${
-            selectedMode === 'katakana'
-              ? 'border-primary bg-primary/10 scale-105'
-              : 'border-base-300 hover:border-primary/50'
+            selectedMode === "katakana"
+              ? "border-primary bg-primary/10 scale-105"
+              : "border-base-300 hover:border-primary/50"
           }`}
         >
           <span className="text-6xl">ア</span>
@@ -45,11 +45,11 @@ export default function PracticePage() {
         </button>
 
         <button
-          onClick={() => setSelectedMode('mixed')}
+          onClick={() => setSelectedMode("mixed")}
           className={`w-64 h-48 rounded-2xl border-4 transition-all cursor-pointer flex flex-col items-center justify-center gap-4 ${
-            selectedMode === 'mixed'
-              ? 'border-primary bg-primary/10 scale-105'
-              : 'border-base-300 hover:border-primary/50'
+            selectedMode === "mixed"
+              ? "border-primary bg-primary/10 scale-105"
+              : "border-base-300 hover:border-primary/50"
           }`}
         >
           <span className="text-5xl">あア</span>
@@ -69,7 +69,7 @@ export default function PracticePage() {
       <button
         onClick={handleNext}
         disabled={!selectedMode}
-        className={`btn btn-primary btn-lg ${!selectedMode ? 'btn-disabled' : ''}`}
+        className={`btn btn-primary btn-lg ${!selectedMode ? "btn-disabled" : ""}`}
       >
         Next
       </button>
