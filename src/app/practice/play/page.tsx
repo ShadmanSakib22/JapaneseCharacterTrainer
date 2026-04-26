@@ -6,19 +6,17 @@ import Link from 'next/link';
 import { hiragana } from '../../../data/hiragana';
 import { katakana } from '../../../data/katakana';
 import {
-  getStats,
   incrementAttempts,
-  incrementRetries,
-  resetRetries,
   recordSession,
   generateSessionId,
-  getCharactersNeedingPractice,
 } from '../../../lib/storage';
 import {
   formatDuration,
   isCorrectAnswer,
   calculateExpectedTime,
+  shuffleArray,
 } from '../../../lib/utils';
+import { usePracticeStore } from '../../../lib/store';
 import CharacterInput from '../../../components/CharacterInput';
 import Analytics from '../../../components/Analytics';
 
@@ -32,7 +30,16 @@ function PlayContent() {
   const [inputs, setInputs] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [duration, setDuration] = useState(0);
+  const [shuffleKey, setShuffleKey] = useState(0);
+  const [sessionMistakes, setSessionMistakes] = useState<Record<string, number>>({});
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const {
+    retriesThisSession,
+    isReshuffling,
+    incrementRetries,
+    clearReshuffle,
+  } = usePracticeStore();
 
   const allCharacters = modeParam === 'katakana' ? katakana : hiragana;
 
@@ -40,19 +47,18 @@ function PlayContent() {
     if (!charactersParam) return [];
     try {
       const charStrings: string[] = JSON.parse(charactersParam);
-      return allCharacters.filter((c) => charStrings.includes(c.char));
+      const filtered = allCharacters.filter((c) => charStrings.includes(c.char));
+      return shuffleArray(filtered);
     } catch {
       return [];
     }
-  }, [charactersParam, allCharacters]);
+  }, [charactersParam, allCharacters, shuffleKey]);
 
   useEffect(() => {
     if (!modeParam || !charactersParam || practiceCharacters.length === 0) {
       router.push('/practice');
       return;
     }
-
-    resetRetries();
 
     intervalRef.current = setInterval(() => {
       setDuration((d) => d + 1);
@@ -64,6 +70,23 @@ function PlayContent() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (isReshuffling) {
+      setInputs({});
+      setIsSubmitted(false);
+      setDuration(0);
+      setSessionMistakes({});
+      setShuffleKey((k) => k + 1);
+      incrementRetries();
+      usePracticeStore.getState().resetStore();
+      clearReshuffle();
+
+      intervalRef.current = setInterval(() => {
+        setDuration((d) => d + 1);
+      }, 1000);
+    }
+  }, [isReshuffling]);
 
   const handleInputChange = (char: string, value: string) => {
     setInputs((prev) => ({ ...prev, [char]: value }));
@@ -85,6 +108,8 @@ function PlayContent() {
       }
     }
 
+    setSessionMistakes(mistakes);
+
     recordSession({
       id: generateSessionId(),
       date: new Date().toISOString(),
@@ -98,20 +123,11 @@ function PlayContent() {
   };
 
   const handlePracticeAgain = () => {
-    setInputs({});
-    setIsSubmitted(false);
-    setDuration(0);
-    incrementRetries();
-
-    intervalRef.current = setInterval(() => {
-      setDuration((d) => d + 1);
-    }, 1000);
+    usePracticeStore.getState().triggerReshuffle();
   };
 
-  const stats = getStats();
   const expectedTime = calculateExpectedTime(practiceCharacters.length);
 
-  const sessionMistakes: Record<string, number> = {};
   const groupMistakes: Record<string, number> = {};
   let weakestGroup: string | null = null;
   let maxGroupMistakes = 0;
@@ -122,7 +138,6 @@ function PlayContent() {
     if (isCorrectAnswer(userInput, charData.romaji)) {
       correctCount++;
     } else {
-      sessionMistakes[charData.char] = 1;
       const groupCount = (groupMistakes[charData.group] || 0) + 1;
       groupMistakes[charData.group] = groupCount;
       if (groupCount > maxGroupMistakes) {
@@ -133,7 +148,8 @@ function PlayContent() {
   }
 
   const wrongCount = practiceCharacters.length - correctCount;
-  const charsNeedingPractice = getCharactersNeedingPractice(stats.characterMistakes, 2);
+  const charsNeedingPractice = Object.entries(sessionMistakes)
+    .map(([char, count]) => ({ char, count }));
 
   if (!modeParam || practiceCharacters.length === 0) {
     return null;
@@ -156,7 +172,7 @@ function PlayContent() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
         {practiceCharacters.map((charData, index) => (
           <CharacterInput
-            key={charData.char}
+            key={`${shuffleKey}-${charData.char}`}
             japaneseChar={charData.char}
             correctRomaji={charData.romaji}
             onChange={(value) => handleInputChange(charData.char, value)}
@@ -188,10 +204,8 @@ function PlayContent() {
             wrongCount={wrongCount}
             weakestGroup={weakestGroup}
             charactersNeedingPractice={charsNeedingPractice}
-            retriesThisSession={stats.retriesThisSession}
-            totalAttempts={stats.totalAttempts}
+            retriesThisSession={retriesThisSession}
             expectedTime={expectedTime}
-            characterMistakes={stats.characterMistakes}
           />
         </div>
       )}

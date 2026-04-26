@@ -9,9 +9,7 @@ interface AnalyticsProps {
   weakestGroup: string | null;
   charactersNeedingPractice: { char: string; count: number }[];
   retriesThisSession: number;
-  totalAttempts: number;
   expectedTime: number;
-  characterMistakes: Record<string, number>;
 }
 
 export default function Analytics({
@@ -21,7 +19,6 @@ export default function Analytics({
   weakestGroup,
   charactersNeedingPractice,
   retriesThisSession,
-  totalAttempts,
   expectedTime,
 }: AnalyticsProps) {
   const accuracy =
@@ -61,10 +58,6 @@ export default function Analytics({
           <div className="stat">
             <div className="stat-title">Retries this session</div>
             <div className="stat-value">{retriesThisSession}</div>
-          </div>
-          <div className="stat">
-            <div className="stat-title">Total attempts</div>
-            <div className="stat-value">{totalAttempts}</div>
           </div>
         </div>
 

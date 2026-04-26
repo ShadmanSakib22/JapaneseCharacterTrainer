@@ -1,3 +1,5 @@
+import { Character } from '../data/hiragana';
+
 export function normalizeRomaji(input: string): string {
   if (!input) return '';
   return input
