@@ -73,7 +73,12 @@ export function getGroupDisplayName(group: string, script: 'hiragana' | 'katakan
     'long-vowel': 'ー',
   };
 
-  const sample = script === 'katakana' ? katakanaSample[group] : hiraganaSample[group] || '?';
+  let sample: string;
+  if (script === 'mixed') {
+    sample = `${hiraganaSample[group] || '?'}${katakanaSample[group] || '?'}`;
+  } else {
+    sample = script === 'katakana' ? (katakanaSample[group] || '?') : (hiraganaSample[group] || '?');
+  }
   
   const displayNames: Record<string, string> = {
     'aiueo': `AIUEO (${sample})`,

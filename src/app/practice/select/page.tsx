@@ -24,18 +24,8 @@ function SelectContent() {
   const groups = mode === 'katakana' 
     ? katakanaGroups 
     : mode === 'mixed'
-      ? [
-          ...hiraganaGroups.map(g => `h-${g}`),
-          ...katakanaGroups.map(g => `k-${g}`),
-        ] as readonly string[]
+      ? [...new Set([...hiraganaGroups, ...katakanaGroups])] as readonly string[]
       : hiraganaGroups;
-
-  const getOriginalGroup = (group: string) => {
-    if (mode === 'mixed') {
-      return group.replace(/^(h|k)-/, '');
-    }
-    return group;
-  };
 
   useEffect(() => {
     if (!mode) {
@@ -47,11 +37,8 @@ function SelectContent() {
     if (selectType === 'all' || selectType === 'characters') {
       return characters;
     }
-    if (mode === 'mixed') {
-      return characters.filter((c) => selectedGroups.has(`h-${c.group}`) || selectedGroups.has(`k-${c.group}`));
-    }
     return characters.filter((c) => selectedGroups.has(c.group));
-  }, [selectType, selectedGroups, characters, mode]);
+  }, [selectType, selectedGroups, characters]);
 
   const toggleGroup = (group: string) => {
     const newSelected = new Set(selectedGroups);
@@ -147,7 +134,7 @@ function SelectContent() {
                   onChange={() => toggleGroup(group)}
                   className="checkbox checkbox-primary"
                 />
-                <span className="text-sm">{getGroupDisplayName(getOriginalGroup(group), mode === 'katakana' ? 'katakana' : 'hiragana')}</span>
+                <span className="text-sm">{getGroupDisplayName(group, mode === 'katakana' ? 'katakana' : mode === 'mixed' ? 'mixed' : 'hiragana')}</span>
               </label>
             ))}
           </div>
