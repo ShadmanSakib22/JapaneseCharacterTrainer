@@ -38,22 +38,58 @@ export function formatDuration(seconds: number): string {
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
-export function getGroupDisplayName(group: string): string {
+export function getGroupDisplayName(group: string, script: 'hiragana' | 'katakana' | 'mixed' = 'hiragana'): string {
+  const hiraganaSample: Record<string, string> = {
+    'aiueo': 'あ',
+    'ka': 'か',
+    'sa': 'さ',
+    'ta': 'た',
+    'na': 'な',
+    'ha': 'は',
+    'ma': 'ま',
+    'ya': 'や',
+    'ra': 'ら',
+    'wa': 'わ',
+    'handakuon': 'ぱ',
+    'dakuon': 'が',
+    'small-tsu': 'っ',
+    'long-vowel': 'ー',
+  };
+  
+  const katakanaSample: Record<string, string> = {
+    'aiueo': 'ア',
+    'ka': 'カ',
+    'sa': 'サ',
+    'ta': 'タ',
+    'na': 'ナ',
+    'ha': 'ハ',
+    'ma': 'マ',
+    'ya': 'ヤ',
+    'ra': 'ラ',
+    'wa': 'ワ',
+    'handakuon': 'パ',
+    'dakuon': 'ガ',
+    'small-tsu': 'ッ',
+    'long-vowel': 'ー',
+  };
+
+  const sample = script === 'katakana' ? katakanaSample[group] : hiraganaSample[group] || '?';
+  
   const displayNames: Record<string, string> = {
-    'aiueo': 'AIUEO (あ)',
-    'ka': 'Ka (か)',
-    'sa': 'Sa (さ)',
-    'ta': 'Ta (た)',
-    'na': 'Na (な)',
-    'ha': 'Ha (は)',
-    'ma': 'Ma (ま)',
-    'ya': 'Ya (や)',
-    'ra': 'Ra (ら)',
-    'wa': 'Wa (わ)',
-    'handakuon': 'Handakuon (ぱ)',
-    'dakuon': 'Dakuon (が)',
-    'small-tsu': 'Small Tsu (っ)',
-    'long-vowel': 'Long Vowels (ー)',
+    'aiueo': `AIUEO (${sample})`,
+    'ka': `Ka (${sample})`,
+    'sa': `Sa (${sample})`,
+    'ta': `Ta (${sample})`,
+    'na': `Na (${sample})`,
+    'ha': `Ha (${sample})`,
+    'ma': `Ma (${sample})`,
+    'ya': `Ya (${sample})`,
+    'ra': `Ra (${sample})`,
+    'wa': `Wa (${sample})`,
+    'handakuon': `Handakuon (${sample})`,
+    'dakuon': `Dakuon (${sample})`,
+    'small-tsu': `Small Tsu (${sample})`,
+    'long-vowel': `Long Vowels (${sample})`,
   };
   return displayNames[group] || group;
 }

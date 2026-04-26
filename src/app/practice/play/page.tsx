@@ -41,7 +41,11 @@ function PlayContent() {
     clearReshuffle,
   } = usePracticeStore();
 
-  const allCharacters = modeParam === 'katakana' ? katakana : hiragana;
+  const allCharacters = modeParam === 'katakana' 
+    ? katakana 
+    : modeParam === 'mixed'
+      ? [...hiragana, ...katakana]
+      : hiragana;
 
   const practiceCharacters = useMemo(() => {
     if (!charactersParam) return [];
@@ -113,7 +117,7 @@ function PlayContent() {
     recordSession({
       id: generateSessionId(),
       date: new Date().toISOString(),
-      mode: modeParam as 'hiragana' | 'katakana',
+      mode: modeParam as 'hiragana' | 'katakana' | 'mixed',
       groups: [...new Set(practiceCharacters.map((c) => c.group))],
       duration,
       correct: practiceCharacters.length - Object.keys(mistakes).length,
@@ -162,7 +166,7 @@ function PlayContent() {
           ← Select
         </Link>
         <h1 className="text-xl font-bold">
-          {modeParam === 'hiragana' ? 'Hiragana' : 'Katakana'} Practice
+          {modeParam === 'hiragana' ? 'Hiragana' : modeParam === 'katakana' ? 'Katakana' : 'Hiragana + Katakana'} Practice
         </h1>
         <div className="text-2xl font-mono font-bold">
           {formatDuration(duration)}

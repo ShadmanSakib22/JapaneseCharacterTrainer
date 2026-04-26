@@ -1,6 +1,6 @@
 import type { Character } from '../data/hiragana';
 
-export type PracticeMode = 'hiragana' | 'katakana';
+export type PracticeMode = 'hiragana' | 'katakana' | 'mixed';
 
 export type Session = {
   id: string;

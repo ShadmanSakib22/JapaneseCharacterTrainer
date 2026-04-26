@@ -10,13 +10,32 @@ import { getGroupDisplayName, shuffleArray } from '../../../lib/utils';
 function SelectContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const mode = searchParams.get('mode') as 'hiragana' | 'katakana' | null;
+  const mode = searchParams.get('mode') as 'hiragana' | 'katakana' | 'mixed' | null;
 
   const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
   const [selectType, setSelectType] = useState<'groups' | 'characters' | 'all'>('groups');
 
-  const characters = mode === 'katakana' ? katakana : hiragana;
-  const groups = mode === 'katakana' ? katakanaGroups : hiraganaGroups;
+  const characters = mode === 'katakana' 
+    ? katakana 
+    : mode === 'mixed'
+      ? [...hiragana, ...katakana]
+      : hiragana;
+  
+  const groups = mode === 'katakana' 
+    ? katakanaGroups 
+    : mode === 'mixed'
+      ? [
+          ...hiraganaGroups.map(g => `h-${g}`),
+          ...katakanaGroups.map(g => `k-${g}`),
+        ] as readonly string[]
+      : hiraganaGroups;
+
+  const getOriginalGroup = (group: string) => {
+    if (mode === 'mixed') {
+      return group.replace(/^(h|k)-/, '');
+    }
+    return group;
+  };
 
   useEffect(() => {
     if (!mode) {
@@ -28,8 +47,11 @@ function SelectContent() {
     if (selectType === 'all' || selectType === 'characters') {
       return characters;
     }
+    if (mode === 'mixed') {
+      return characters.filter((c) => selectedGroups.has(`h-${c.group}`) || selectedGroups.has(`k-${c.group}`));
+    }
     return characters.filter((c) => selectedGroups.has(c.group));
-  }, [selectType, selectedGroups, characters]);
+  }, [selectType, selectedGroups, characters, mode]);
 
   const toggleGroup = (group: string) => {
     const newSelected = new Set(selectedGroups);
@@ -73,7 +95,7 @@ function SelectContent() {
       </Link>
 
       <h1 className="text-3xl font-bold mb-2">
-        {mode === 'hiragana' ? 'Hiragana' : 'Katakana'} Practice
+        {mode === 'hiragana' ? 'Hiragana' : mode === 'katakana' ? 'Katakana' : 'Hiragana + Katakana'} Practice
       </h1>
       <p className="text-base-content/70 mb-6">Select your practice scope</p>
 
@@ -125,7 +147,7 @@ function SelectContent() {
                   onChange={() => toggleGroup(group)}
                   className="checkbox checkbox-primary"
                 />
-                <span className="text-sm">{getGroupDisplayName(group)}</span>
+                <span className="text-sm">{getGroupDisplayName(getOriginalGroup(group), mode === 'katakana' ? 'katakana' : 'hiragana')}</span>
               </label>
             ))}
           </div>

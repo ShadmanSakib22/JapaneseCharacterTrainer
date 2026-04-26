@@ -1,7 +1,7 @@
 Japanese Character Practice App - Full Plan (Version 1)
 Project Overview
 
-- App Name: JPLift - Japanese Character Trainer
+- App Name: Japanese Character Trainer
 - Platform: Next.js 16 with React 19, Tailwind CSS, DaisyUI
 - Storage: Browser localStorage for character data and analytics
   Route Structure
