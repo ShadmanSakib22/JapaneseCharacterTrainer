@@ -1,11 +1,533 @@
 @import "tailwindcss";
-@plugin "daisyui" {
-  themes: retro;
-}
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: "VT323", monospace;
+  --font-mono: "VT323", monospace;
+}
+
+:root {
+  --bg-dark: #0a0a0f;
+  --bg-panel: #111118;
+  --bg-card: #1a1a2e;
+  --accent-cyan: #00ffff;
+  --accent-gold: #ffd700;
+  --accent-magenta: #ff00ff;
+  --accent-green: #00ff88;
+  --accent-red: #ff3366;
+  --border-glow: rgba(0, 255, 255, 0.4);
+  --text-primary: #e8e8f0;
+  --text-dim: #7a7a9a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: "VT323", monospace;
+  min-height: 100vh;
+}
+
+/* Scanline overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Pixel border utility */
+.pixel-border {
+  border: 3px solid var(--accent-cyan);
+  box-shadow:
+    0 0 8px var(--accent-cyan),
+    inset 0 0 8px rgba(0, 255, 255, 0.05),
+    4px 4px 0 rgba(0, 255, 255, 0.3);
+}
+
+.pixel-border-gold {
+  border: 3px solid var(--accent-gold);
+  box-shadow:
+    0 0 8px var(--accent-gold),
+    inset 0 0 8px rgba(255, 215, 0, 0.05),
+    4px 4px 0 rgba(255, 215, 0, 0.3);
+}
+
+.pixel-border-magenta {
+  border: 3px solid var(--accent-magenta);
+  box-shadow:
+    0 0 8px var(--accent-magenta),
+    inset 0 0 8px rgba(255, 0, 255, 0.05),
+    4px 4px 0 rgba(255, 0, 255, 0.3);
+}
+
+/* Glow text */
+.glow-cyan {
+  color: var(--accent-cyan);
+  text-shadow:
+    0 0 10px var(--accent-cyan),
+    0 0 20px var(--accent-cyan);
+}
+
+.glow-gold {
+  color: var(--accent-gold);
+  text-shadow:
+    0 0 10px var(--accent-gold),
+    0 0 20px var(--accent-gold);
+}
+
+.glow-magenta {
+  color: var(--accent-magenta);
+  text-shadow:
+    0 0 10px var(--accent-magenta),
+    0 0 20px var(--accent-magenta);
+}
+
+.glow-green {
+  color: var(--accent-green);
+  text-shadow: 0 0 10px var(--accent-green);
+}
+
+.glow-red {
+  color: var(--accent-red);
+  text-shadow: 0 0 10px var(--accent-red);
+}
+
+/* Pixel font headings */
+.font-pixel {
+  font-family: "Press Start 2P", monospace;
+}
+
+.font-vt {
+  font-family: "VT323", monospace;
+}
+
+/* Button styles */
+.btn-game {
+  font-family: "Press Start 2P", monospace;
+  font-size: 11px;
+  background: transparent;
+  color: var(--accent-cyan);
+  border: 3px solid var(--accent-cyan);
+  box-shadow:
+    0 0 8px var(--accent-cyan),
+    4px 4px 0 rgba(0, 255, 255, 0.3);
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.1s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 8px) 0,
+    100% 8px,
+    100% 100%,
+    8px 100%,
+    0 calc(100% - 8px)
+  );
+}
+
+.btn-game:hover:not(:disabled) {
+  background: rgba(0, 255, 255, 0.1);
+  box-shadow:
+    0 0 16px var(--accent-cyan),
+    4px 4px 0 rgba(0, 255, 255, 0.5);
+  transform: translate(-1px, -1px);
+}
+
+.btn-game:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow:
+    0 0 4px var(--accent-cyan),
+    2px 2px 0 rgba(0, 255, 255, 0.3);
+}
+
+.btn-game:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn-game-gold {
+  color: var(--accent-gold);
+  border-color: var(--accent-gold);
+  box-shadow:
+    0 0 8px var(--accent-gold),
+    4px 4px 0 rgba(255, 215, 0, 0.3);
+}
+
+.btn-game-gold:hover:not(:disabled) {
+  background: rgba(255, 215, 0, 0.1);
+  box-shadow:
+    0 0 16px var(--accent-gold),
+    4px 4px 0 rgba(255, 215, 0, 0.5);
+}
+
+.btn-game-magenta {
+  color: var(--accent-magenta);
+  border-color: var(--accent-magenta);
+  box-shadow:
+    0 0 8px var(--accent-magenta),
+    4px 4px 0 rgba(255, 0, 255, 0.3);
+}
+
+.btn-game-magenta:hover:not(:disabled) {
+  background: rgba(255, 0, 255, 0.1);
+  box-shadow:
+    0 0 16px var(--accent-magenta),
+    4px 4px 0 rgba(255, 0, 255, 0.5);
+}
+
+/* Game panel */
+.game-panel {
+  background: var(--bg-panel);
+  border: 2px solid rgba(0, 255, 255, 0.2);
+  position: relative;
+}
+
+.game-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent-cyan),
+    transparent
+  );
+}
+
+/* Character card */
+.char-card {
+  background: var(--bg-card);
+  border: 2px solid rgba(0, 255, 255, 0.25);
+  transition: all 0.15s;
+}
+
+.char-card:hover {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+}
+
+.char-card.correct {
+  border-color: var(--accent-green);
+  background: rgba(0, 255, 136, 0.08);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+}
+
+.char-card.incorrect {
+  border-color: var(--accent-red);
+  background: rgba(255, 51, 102, 0.08);
+  box-shadow: 0 0 12px rgba(255, 51, 102, 0.3);
+}
+
+/* Input styling */
+.game-input {
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(0, 255, 255, 0.3);
+  color: var(--accent-cyan);
+  font-family: "VT323", monospace;
+  font-size: 20px;
+  text-align: center;
+  width: 100%;
+  padding: 6px 8px;
+  outline: none;
+  transition: all 0.15s;
+}
+
+.game-input:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+}
+
+.game-input:disabled {
+  cursor: not-allowed;
+}
+
+.game-input.correct {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+}
+
+.game-input.incorrect {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+  box-shadow: 0 0 8px rgba(255, 51, 102, 0.4);
+}
+
+/* HP/XP bar */
+.stat-bar {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+/* Blink animation */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* Float animation */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse glow */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 8px var(--accent-cyan);
+  }
+  50% {
+    box-shadow:
+      0 0 20px var(--accent-cyan),
+      0 0 40px rgba(0, 255, 255, 0.3);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Screen flicker on load */
+@keyframes flicker {
+  0% {
+    opacity: 0.8;
+  }
+  5% {
+    opacity: 1;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.flicker {
+  animation: flicker 0.5s ease-in forwards;
+}
+
+/* Stars background */
+.stars-bg {
+  background-image:
+    radial-gradient(
+      1px 1px at 10% 20%,
+      rgba(255, 255, 255, 0.3) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1px 1px at 30% 60%,
+      rgba(255, 255, 255, 0.2) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1px 1px at 50% 10%,
+      rgba(255, 255, 255, 0.3) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1px 1px at 70% 80%,
+      rgba(255, 255, 255, 0.2) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1px 1px at 90% 40%,
+      rgba(255, 255, 255, 0.3) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1px 1px at 20% 90%,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1px 1px at 80% 5%,
+      rgba(255, 255, 255, 0.2) 0%,
+      transparent 100%
+    );
+}
+
+/* Mode select card */
+.mode-card {
+  background: var(--bg-card);
+  border: 3px solid rgba(0, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.15s;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 12px) 0,
+    100% 12px,
+    100% 100%,
+    12px 100%,
+    0 calc(100% - 12px)
+  );
+  position: relative;
+}
+
+.mode-card::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 12px) 0,
+    100% 12px,
+    100% 100%,
+    12px 100%,
+    0 calc(100% - 12px)
+  );
+  z-index: -1;
+}
+
+.mode-card:hover:not(.disabled) {
+  border-color: var(--accent-cyan);
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.3),
+    inset 0 0 20px rgba(0, 255, 255, 0.05);
+  transform: translateY(-4px);
+}
+
+.mode-card.selected {
+  border-color: var(--accent-gold);
+  box-shadow:
+    0 0 24px rgba(255, 215, 0, 0.4),
+    inset 0 0 24px rgba(255, 215, 0, 0.05);
+}
+
+.mode-card.selected::before {
+  content: "▶ SELECTED";
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  color: var(--accent-gold);
+  text-shadow: 0 0 6px var(--accent-gold);
+}
+
+.mode-card.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* HP bar colors */
+.bar-green {
+  background: linear-gradient(90deg, #00ff88, #00cc66);
+}
+.bar-gold {
+  background: linear-gradient(90deg, #ffd700, #ff9900);
+}
+.bar-cyan {
+  background: linear-gradient(90deg, #00ffff, #0088ff);
+}
+.bar-magenta {
+  background: linear-gradient(90deg, #ff00ff, #aa00ff);
+}
+.bar-red {
+  background: linear-gradient(90deg, #ff3366, #cc0033);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent-cyan);
+}
+
+/* Group checkbox */
+.group-checkbox {
+  background: var(--bg-card);
+  border: 2px solid rgba(0, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.12s;
+  padding: 10px 14px;
+}
+
+.group-checkbox:hover {
+  border-color: var(--accent-cyan);
+  background: rgba(0, 255, 255, 0.05);
+}
+
+.group-checkbox.active {
+  border-color: var(--accent-gold);
+  background: rgba(255, 215, 0, 0.08);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+}
+
+/* Corner decorations */
+.corner-decoration {
+  position: relative;
+}
+.corner-decoration::before,
+.corner-decoration::after {
+  content: "◆";
+  position: absolute;
+  color: var(--accent-cyan);
+  font-size: 10px;
+  opacity: 0.5;
+}
+.corner-decoration::before {
+  top: 6px;
+  left: 6px;
+}
+.corner-decoration::after {
+  bottom: 6px;
+  right: 6px;
 }

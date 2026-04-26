@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { isCorrectAnswer as checkAnswer } from '../lib/utils';
+import { useState, useRef, useEffect } from "react";
+import { isCorrectAnswer as checkAnswer } from "../lib/utils";
 
 interface CharacterInputProps {
   japaneseChar: string;
@@ -18,15 +18,13 @@ export default function CharacterInput({
   isSubmitted,
   autoFocus = false,
 }: CharacterInputProps) {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const [isCorrect, setIsCorrect] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
 
   useEffect(() => {
-    if (autoFocus && inputRef.current) {
-      inputRef.current.focus();
-    }
+    if (autoFocus && inputRef.current) inputRef.current.focus();
   }, [autoFocus]);
 
   useEffect(() => {
@@ -45,34 +43,66 @@ export default function CharacterInput({
 
   return (
     <div
-      className={`flex flex-col items-center p-4 rounded-xl border-4 transition-colors ${
-        isSubmitted
-          ? isCorrect
-            ? 'border-success bg-success/10'
-            : 'border-error bg-error/10'
-          : 'border-base-300 bg-base-200'
-      }`}
+      className={`char-card p-3 flex flex-col items-center gap-2 ${isSubmitted ? (isCorrect ? "correct" : "incorrect") : ""}`}
+      style={{
+        clipPath:
+          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
+      }}
     >
-      <span className="text-4xl mb-3">{japaneseChar}</span>
+      {/* Status indicator */}
+      {isSubmitted && (
+        <div className="w-full flex justify-end">
+          <span
+            style={{
+              fontSize: "14px",
+              color: isCorrect ? "var(--accent-green)" : "var(--accent-red)",
+            }}
+          >
+            {isCorrect ? "✓" : "✗"}
+          </span>
+        </div>
+      )}
+
+      {/* Japanese character */}
+      <span
+        style={{
+          fontSize: "48px",
+          lineHeight: 1,
+          color: isSubmitted
+            ? isCorrect
+              ? "var(--accent-green)"
+              : "var(--accent-red)"
+            : "var(--text-primary)",
+          textShadow: isSubmitted
+            ? isCorrect
+              ? "0 0 12px var(--accent-green)"
+              : "0 0 12px var(--accent-red)"
+            : "none",
+        }}
+      >
+        {japaneseChar}
+      </span>
+
+      {/* Input */}
       <input
         ref={inputRef}
         type="text"
         value={value}
         onChange={handleChange}
         disabled={isSubmitted}
-        placeholder="type romaji"
-        className={`input input-bordered w-full text-center text-lg ${
-          isSubmitted
-            ? isCorrect
-              ? 'input-success'
-              : 'input-error'
-            : ''
-        }`}
+        placeholder="romaji"
+        className={`game-input ${isSubmitted ? (isCorrect ? "correct" : "incorrect") : ""}`}
+        style={{ fontSize: "18px" }}
       />
+
+      {/* Correct answer reveal */}
       {showAnswer && (
-        <span className="text-sm mt-2 text-error">
-          Correct: {correctRomaji}
-        </span>
+        <div
+          className="font-vt text-lg"
+          style={{ color: "var(--accent-gold)" }}
+        >
+          ▶ {correctRomaji}
+        </div>
       )}
     </div>
   );

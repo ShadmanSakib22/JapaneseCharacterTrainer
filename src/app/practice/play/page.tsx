@@ -1,5 +1,4 @@
 "use client";
-// src/app/practice/play/page.tsx
 import {
   Suspense,
   useState,
@@ -30,7 +29,6 @@ import Analytics from "../../../components/Analytics";
 function PlayContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-
   const modeParam = searchParams.get("mode");
   const charactersParam = searchParams.get("characters");
 
@@ -70,7 +68,6 @@ function PlayContent() {
     }));
   }, []);
 
-  // Initialize characters on mount or when params change
   useEffect(() => {
     if (!charactersParam || allCharacters.length === 0) return;
     try {
@@ -85,20 +82,14 @@ function PlayContent() {
   }, [charactersParam, allCharacters, prepareAndShuffle]);
 
   useEffect(() => {
-    // Reset session stats when starting a new practice
     usePracticeStore.getState().resetStore();
-
     if (!modeParam || !charactersParam) {
       router.push("/practice");
       return;
     }
-
     if (!intervalRef.current) {
-      intervalRef.current = setInterval(() => {
-        setDuration((d) => d + 1);
-      }, 1000);
+      intervalRef.current = setInterval(() => setDuration((d) => d + 1), 1000);
     }
-
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -113,19 +104,11 @@ function PlayContent() {
       setIsSubmitted(false);
       setDuration(0);
       setShuffleKey((k) => k + 1);
-
-      // Explicitly reshuffle and assign new unique IDs
       setShuffledChars((prev) => prepareAndShuffle(prev));
-
       incrementRetries();
       clearReshuffle();
-
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-      intervalRef.current = setInterval(() => {
-        setDuration((d) => d + 1);
-      }, 1000);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      intervalRef.current = setInterval(() => setDuration((d) => d + 1), 1000);
     }
   }, [isReshuffling, incrementRetries, clearReshuffle, prepareAndShuffle]);
 
@@ -139,13 +122,11 @@ function PlayContent() {
       intervalRef.current = null;
     }
     setIsSubmitted(true);
-
     incrementAttempts();
 
     const currentMistakes: Record<string, number> = {};
     for (const charData of shuffledChars) {
-      const userInput = inputs[charData.char] || "";
-      if (!isCorrectAnswer(userInput, charData.romaji)) {
+      if (!isCorrectAnswer(inputs[charData.char] || "", charData.romaji)) {
         currentMistakes[charData.char] = 1;
       }
     }
@@ -160,13 +141,10 @@ function PlayContent() {
     setSessionCorrect((prev) => prev + currentCorrect);
     setSessionWrong((prev) => prev + currentWrong);
     setAccuracyHistory((prev) => [...prev, currentAccuracy]);
-
-    // Accumulate mistakes for the session view
     setSessionMistakes((prev) => {
       const next = { ...prev };
-      for (const char of Object.keys(currentMistakes)) {
+      for (const char of Object.keys(currentMistakes))
         next[char] = (next[char] || 0) + 1;
-      }
       return next;
     });
 
@@ -182,54 +160,109 @@ function PlayContent() {
     });
   };
 
-  const handlePracticeAgain = () => {
-    triggerReshuffle();
-  };
-
   const expectedTime = calculateExpectedTime(shuffledChars.length);
-
   let correctCount = 0;
   for (const charData of shuffledChars) {
-    const userInput = inputs[charData.char] || "";
-    if (isCorrectAnswer(userInput, charData.romaji)) {
+    if (isCorrectAnswer(inputs[charData.char] || "", charData.romaji))
       correctCount++;
-    }
   }
-
   const wrongCount = shuffledChars.length - correctCount;
   const charsNeedingPractice = Object.entries(sessionMistakes)
     .map(([char, count]) => ({ char, count }))
     .sort((a, b) => b.count - a.count);
-
   const sessionAccuracy =
     sessionCorrect + sessionWrong > 0
       ? Math.round((sessionCorrect / (sessionCorrect + sessionWrong)) * 100)
       : 0;
 
-  if (!modeParam || shuffledChars.length === 0) {
-    return null;
-  }
+  const modeColor =
+    modeParam === "katakana"
+      ? "var(--accent-magenta)"
+      : modeParam === "mixed"
+        ? "var(--accent-green)"
+        : "var(--accent-cyan)";
+  const modeLabel =
+    modeParam === "katakana"
+      ? "KATAKANA"
+      : modeParam === "mixed"
+        ? "MIXED"
+        : "HIRAGANA";
+
+  // Answered count for progress
+  const answeredCount = Object.keys(inputs).filter(
+    (k) => inputs[k].length > 0,
+  ).length;
+  const progressPct =
+    shuffledChars.length > 0
+      ? Math.round((answeredCount / shuffledChars.length) * 100)
+      : 0;
+
+  if (!modeParam || shuffledChars.length === 0) return null;
 
   return (
-    <div className="min-h-screen flex flex-col p-4">
-      <div className="flex items-center justify-between mb-4">
-        <Link href="/practice/select" className="btn btn-ghost btn-sm">
-          ← Select
+    <div
+      className="min-h-screen p-4"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(0,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.02) 1px, transparent 1px)",
+        backgroundSize: "40px 40px",
+      }}
+    >
+      {/* HUD Header */}
+      <div className="game-panel p-3 mb-4 flex items-center justify-between gap-4">
+        <Link href="/practice/select" className="btn-game text-xs px-3 py-2">
+          ◀ SELECT
         </Link>
-        <h1 className="text-xl font-bold">
-          {modeParam === "hiragana"
-            ? "Hiragana"
-            : modeParam === "katakana"
-              ? "Katakana"
-              : "Hiragana + Katakana"}{" "}
-          Practice
-        </h1>
-        <div className="text-2xl font-mono font-bold">
-          {formatDuration(duration)}
+
+        <div className="flex-1 min-w-0">
+          <div className="font-pixel text-xs mb-1" style={{ color: modeColor }}>
+            {modeLabel} BATTLE
+          </div>
+          <div className="stat-bar w-full">
+            <div
+              className="stat-bar-fill bar-cyan transition-all duration-300"
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
+          <div
+            className="font-vt text-sm mt-1"
+            style={{ color: "var(--text-dim)" }}
+          >
+            {answeredCount}/{shuffledChars.length} answered
+          </div>
+        </div>
+
+        <div className="text-center">
+          <div
+            className="font-pixel text-xs"
+            style={{ color: "var(--text-dim)" }}
+          >
+            TIME
+          </div>
+          <div className="font-pixel text-xl glow-gold">
+            {formatDuration(duration)}
+          </div>
+        </div>
+
+        <div className="text-center hidden md:block">
+          <div
+            className="font-pixel text-xs"
+            style={{ color: "var(--text-dim)" }}
+          >
+            LIVES
+          </div>
+          <div
+            className="font-vt text-2xl"
+            style={{ color: "var(--accent-red)" }}
+          >
+            {"♥".repeat(Math.max(0, 3 - retriesThisSession))}
+            {"♡".repeat(Math.min(3, retriesThisSession))}
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+      {/* Character grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 mb-6">
         {shuffledChars.map((charData, index) => (
           <CharacterInput
             key={charData.id}
@@ -242,22 +275,32 @@ function PlayContent() {
         ))}
       </div>
 
+      {/* Action bar */}
       {!isSubmitted ? (
-        <button
-          onClick={handleSubmit}
-          className="btn btn-primary btn-lg w-full"
-        >
-          Submit
-        </button>
+        <div className="flex justify-center">
+          <button
+            onClick={handleSubmit}
+            className="btn-game btn-game-gold text-sm px-12 py-4"
+          >
+            ⚔ SUBMIT ANSWERS
+          </button>
+        </div>
       ) : (
         <div className="space-y-4">
-          <button
-            onClick={handlePracticeAgain}
-            className="btn btn-secondary btn-lg w-full"
-          >
-            Practice Again
-          </button>
-
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={() => triggerReshuffle()}
+              className="btn-game btn-game-magenta text-xs px-8 py-3"
+            >
+              ↺ RETRY
+            </button>
+            <Link
+              href="/practice/select"
+              className="btn-game text-xs px-8 py-3"
+            >
+              ◀ NEW QUEST
+            </Link>
+          </div>
           <Analytics
             duration={duration}
             correctCount={correctCount}
@@ -278,8 +321,8 @@ export default function PlayPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          Loading...
+        <div className="min-h-screen flex items-center justify-center font-pixel text-xs glow-cyan">
+          LOADING DUNGEON...
         </div>
       }
     >
