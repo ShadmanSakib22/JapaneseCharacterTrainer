@@ -1,6 +1,7 @@
 import { Press_Start_2P, VT323, Orbitron } from "next/font/google";
 import "./globals.css";
 import { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 
 const pressStart2P = Press_Start_2P({
   subsets: ["latin"],
@@ -35,7 +36,10 @@ export default function RootLayout({
       lang="en"
       className={`h-full ${pressStart2P.variable} ${vt323.variable} ${orbitron.variable}`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
