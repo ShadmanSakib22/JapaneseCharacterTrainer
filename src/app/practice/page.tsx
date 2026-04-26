@@ -25,197 +25,215 @@ export default function PracticePage() {
         }}
       />
 
-      {/* Title block */}
-      <div className="relative z-10 text-center mb-12">
-        <div className="font-pixel text-xs glow-cyan mb-2 tracking-widest">
-          ― PRESS START ―
-        </div>
-        <h1 className="font-pixel text-3xl md:text-4xl glow-gold mb-3 leading-relaxed">
-          KANA QUEST
-        </h1>
-        <div className="font-vt text-2xl" style={{ color: "var(--text-dim)" }}>
-          Japanese Character Training Simulator
-        </div>
-        <div className="mt-4 flex items-center justify-center gap-2">
-          <span className="glow-cyan font-pixel text-xs">LVL 1</span>
-          <div className="stat-bar w-32">
-            <div className="stat-bar-fill bar-cyan" style={{ width: "15%" }} />
+      <main className="py-24">
+        {/* Title block */}
+        <div className="relative z-10 text-center mb-12">
+          <div className="font-pixel text-xs glow-cyan mb-2 tracking-widest">
+            ― PRESS START ―
           </div>
-          <span
-            style={{
-              color: "var(--text-dim)",
-              fontFamily: "VT323",
-              fontSize: "18px",
-            }}
-          >
-            15 / 100 XP
-          </span>
-        </div>
-      </div>
-
-      {/* Mode selection */}
-      <div className="relative z-10 w-full max-w-4xl mb-10">
-        <div className="font-pixel text-xs glow-cyan mb-6 text-center tracking-widest">
-          ▼ SELECT YOUR TRAINING CLASS ▼
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <button
-            onClick={() => setSelectedMode("hiragana")}
-            className={`mode-card p-6 flex flex-col items-center gap-3 ${selectedMode === "hiragana" ? "selected" : ""}`}
-          >
-            <span className="float" style={{ fontSize: "56px", lineHeight: 1 }}>
-              あ
-            </span>
-            <span className="font-pixel text-xs glow-cyan">HIRAGANA</span>
-            <div
-              className="font-vt text-lg"
-              style={{ color: "var(--text-dim)" }}
-            >
-              Beginner
-            </div>
-            <div className="flex gap-1">
-              {"★★★☆☆".split("").map((s, i) => (
-                <span
-                  key={i}
-                  style={{
-                    color: s === "★" ? "var(--accent-gold)" : "var(--text-dim)",
-                    fontSize: "12px",
-                  }}
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
-          </button>
-
-          <button
-            onClick={() => setSelectedMode("katakana")}
-            className={`mode-card p-6 flex flex-col items-center gap-3 ${selectedMode === "katakana" ? "selected" : ""}`}
-          >
-            <span
-              className="float"
-              style={{
-                fontSize: "56px",
-                lineHeight: 1,
-                animationDelay: "0.5s",
-              }}
-            >
-              ア
-            </span>
-            <span
-              className="font-pixel text-xs"
-              style={{
-                color: "var(--accent-magenta)",
-                textShadow: "0 0 10px var(--accent-magenta)",
-              }}
-            >
-              KATAKANA
-            </span>
-            <div
-              className="font-vt text-lg"
-              style={{ color: "var(--text-dim)" }}
-            >
-              Intermediate
-            </div>
-            <div className="flex gap-1">
-              {"★★★★☆".split("").map((s, i) => (
-                <span
-                  key={i}
-                  style={{
-                    color: s === "★" ? "var(--accent-gold)" : "var(--text-dim)",
-                    fontSize: "12px",
-                  }}
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
-          </button>
-
-          <button
-            onClick={() => setSelectedMode("mixed")}
-            className={`mode-card p-6 flex flex-col items-center gap-3 ${selectedMode === "mixed" ? "selected" : ""}`}
-          >
-            <span
-              className="float"
-              style={{ fontSize: "40px", lineHeight: 1, animationDelay: "1s" }}
-            >
-              あア
-            </span>
-            <span
-              className="font-pixel text-xs"
-              style={{
-                color: "var(--accent-green)",
-                textShadow: "0 0 10px var(--accent-green)",
-              }}
-            >
-              MIXED
-            </span>
-            <div
-              className="font-vt text-lg"
-              style={{ color: "var(--text-dim)" }}
-            >
-              Advanced
-            </div>
-            <div className="flex gap-1">
-              {"★★★★★".split("").map((s, i) => (
-                <span
-                  key={i}
-                  style={{
-                    color: s === "★" ? "var(--accent-gold)" : "var(--text-dim)",
-                    fontSize: "12px",
-                  }}
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
-          </button>
-
-          <div className="mode-card disabled p-6 flex flex-col items-center gap-3">
-            <span style={{ fontSize: "56px", lineHeight: 1, opacity: 0.3 }}>
-              漢
-            </span>
-            <span
-              className="font-pixel text-xs"
-              style={{ color: "var(--text-dim)" }}
-            >
-              KANJI
-            </span>
-            <div
-              className="font-vt text-lg"
-              style={{ color: "var(--text-dim)" }}
-            >
-              ???
-            </div>
-            <div
-              className="font-pixel text-xs"
-              style={{ color: "var(--text-dim)", fontSize: "8px" }}
-            >
-              LOCKED
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Start button */}
-      <div className="relative z-10 flex flex-col items-center justify-center pb-10">
-        <button
-          onClick={handleNext}
-          disabled={!selectedMode}
-          className="btn-game btn-game-gold text-base px-10 py-4"
-        >
-          {selectedMode ? `▶ START QUEST` : `SELECT CLASS`}
-        </button>
-        {!selectedMode && (
+          <h1 className="font-pixel text-3xl md:text-4xl glow-gold mb-3 leading-relaxed">
+            KANA QUEST
+          </h1>
           <div
-            className="text-center mt-3 font-vt text-xl"
+            className="font-vt text-xl sm:text-2xl"
             style={{ color: "var(--text-dim)" }}
           >
-            Choose a training class above
+            Japanese Character Training Simulator
           </div>
-        )}
-      </div>
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <span className="glow-cyan font-pixel text-xs">LVL 1</span>
+            <div className="stat-bar w-32">
+              <div
+                className="stat-bar-fill bar-cyan"
+                style={{ width: "15%" }}
+              />
+            </div>
+            <span
+              style={{
+                color: "var(--text-dim)",
+                fontFamily: "VT323",
+                fontSize: "18px",
+              }}
+            >
+              15 / 100 XP
+            </span>
+          </div>
+        </div>
+
+        {/* Mode selection */}
+        <div className="relative z-10 w-full max-w-4xl mb-10">
+          <div className="font-pixel text-[9px] sm:text-xs glow-cyan mb-6 text-center tracking-widest">
+            ▼ SELECT YOUR TRAINING CLASS ▼
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button
+              onClick={() => setSelectedMode("hiragana")}
+              className={`mode-card p-6 flex flex-col items-center gap-3 ${selectedMode === "hiragana" ? "selected" : ""}`}
+            >
+              <span
+                className="float"
+                style={{ fontSize: "56px", lineHeight: 1 }}
+              >
+                あ
+              </span>
+              <span className="font-pixel text-xs glow-cyan">HIRAGANA</span>
+              <div
+                className="font-vt text-lg"
+                style={{ color: "var(--text-dim)" }}
+              >
+                Beginner
+              </div>
+              <div className="flex gap-1">
+                {"★★★☆☆".split("").map((s, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      color:
+                        s === "★" ? "var(--accent-gold)" : "var(--text-dim)",
+                      fontSize: "12px",
+                    }}
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </button>
+
+            <button
+              onClick={() => setSelectedMode("katakana")}
+              className={`mode-card p-6 flex flex-col items-center gap-3 ${selectedMode === "katakana" ? "selected" : ""}`}
+            >
+              <span
+                className="float"
+                style={{
+                  fontSize: "56px",
+                  lineHeight: 1,
+                  animationDelay: "0.5s",
+                }}
+              >
+                ア
+              </span>
+              <span
+                className="font-pixel text-xs"
+                style={{
+                  color: "var(--accent-magenta)",
+                  textShadow: "0 0 10px var(--accent-magenta)",
+                }}
+              >
+                KATAKANA
+              </span>
+              <div
+                className="font-vt text-lg"
+                style={{ color: "var(--text-dim)" }}
+              >
+                Intermediate
+              </div>
+              <div className="flex gap-1">
+                {"★★★★☆".split("").map((s, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      color:
+                        s === "★" ? "var(--accent-gold)" : "var(--text-dim)",
+                      fontSize: "12px",
+                    }}
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </button>
+
+            <button
+              onClick={() => setSelectedMode("mixed")}
+              className={`mode-card p-6 flex flex-col items-center gap-3 ${selectedMode === "mixed" ? "selected" : ""}`}
+            >
+              <span
+                className="float"
+                style={{
+                  fontSize: "40px",
+                  lineHeight: 1,
+                  animationDelay: "1s",
+                }}
+              >
+                あア
+              </span>
+              <span
+                className="font-pixel text-xs"
+                style={{
+                  color: "var(--accent-green)",
+                  textShadow: "0 0 10px var(--accent-green)",
+                }}
+              >
+                MIXED
+              </span>
+              <div
+                className="font-vt text-lg"
+                style={{ color: "var(--text-dim)" }}
+              >
+                Advanced
+              </div>
+              <div className="flex gap-1">
+                {"★★★★★".split("").map((s, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      color:
+                        s === "★" ? "var(--accent-gold)" : "var(--text-dim)",
+                      fontSize: "12px",
+                    }}
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </button>
+
+            <div className="mode-card disabled p-6 flex flex-col items-center gap-3">
+              <span style={{ fontSize: "56px", lineHeight: 1, opacity: 0.3 }}>
+                漢
+              </span>
+              <span
+                className="font-pixel text-xs"
+                style={{ color: "var(--text-dim)" }}
+              >
+                KANJI
+              </span>
+              <div
+                className="font-vt text-lg"
+                style={{ color: "var(--text-dim)" }}
+              >
+                ???
+              </div>
+              <div
+                className="font-pixel text-xs"
+                style={{ color: "var(--text-dim)", fontSize: "8px" }}
+              >
+                LOCKED
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Start button */}
+        <div className="relative z-10 flex flex-col items-center justify-center">
+          <button
+            onClick={handleNext}
+            disabled={!selectedMode}
+            className="btn-game btn-game-gold text-base px-10 py-4"
+          >
+            {selectedMode ? `▶ START QUEST` : `SELECT CLASS`}
+          </button>
+          {!selectedMode && (
+            <div
+              className="text-center mt-3 font-vt text-xl"
+              style={{ color: "var(--text-dim)" }}
+            >
+              Choose a training class above
+            </div>
+          )}
+        </div>
+      </main>
 
       {/* Decorative corners */}
       <div className="absolute top-4 left-4 font-pixel text-xs glow-cyan opacity-40">

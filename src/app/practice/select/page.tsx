@@ -83,10 +83,10 @@ function SelectContent() {
       }}
     >
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex flex-wrap items-center gap-4 mb-8">
         <button
           onClick={() => router.push("/practice")}
-          className="btn-game text-xs px-4 py-2"
+          className="btn-game text-[8px] text-nowrap sm:text-xs px-4 py-2"
         >
           ◀ BACK
         </button>
@@ -98,14 +98,14 @@ function SelectContent() {
             DUNGEON SELECT
           </div>
           <h1
-            className="font-pixel text-lg"
+            className="font-pixel text-base sm:text-lg"
             style={{ color: modeColor, textShadow: `0 0 10px ${modeColor}` }}
           >
             {modeLabel} TRAINING
           </h1>
         </div>
         <div
-          className="ml-auto font-vt text-2xl"
+          className="ml-auto font-vt text-xl sm:text-2xl"
           style={{ color: "var(--text-dim)" }}
         >
           <span style={{ color: modeColor }}>{availableCharacters.length}</span>{" "}
@@ -114,7 +114,7 @@ function SelectContent() {
       </div>
 
       {/* Tab selector */}
-      <div className="flex gap-3 mb-6">
+      <div className="flex flex-wrap gap-3 mb-6">
         {[
           { id: "groups", label: "▦ BY GROUP" },
           { id: "characters", label: "◈ BY CHAR" },
@@ -123,7 +123,7 @@ function SelectContent() {
           <button
             key={id}
             onClick={() => setSelectType(id as any)}
-            className="font-pixel text-xs px-4 py-3 transition-all"
+            className="font-pixel text-[8px] sm:text-xs px-4 py-3 transition-all"
             style={{
               background:
                 selectType === id ? "rgba(0,255,255,0.1)" : "transparent",
@@ -140,13 +140,13 @@ function SelectContent() {
         <div className="ml-auto flex gap-2">
           <button
             onClick={() => setSelectedGroups(new Set(groups))}
-            className="btn-game text-xs px-3 py-2"
+            className="btn-game text-[8px] sm:text-xs px-3 py-2"
           >
             SELECT ALL
           </button>
           <button
             onClick={() => setSelectedGroups(new Set())}
-            className="font-pixel text-xs px-3 py-2 transition-all"
+            className="font-pixel text-[8px] sm:text-xs px-3 py-2 transition-all"
             style={{
               border: "2px solid rgba(255,255,255,0.15)",
               color: "var(--text-dim)",
@@ -161,7 +161,7 @@ function SelectContent() {
       {/* Group selection */}
       {selectType === "groups" && (
         <div className="game-panel p-4 mb-6">
-          <div className="font-pixel text-xs glow-cyan mb-4">
+          <div className="font-pixel text-[8px] sm:text-xs glow-cyan mb-4">
             ▼ SELECT TRAINING GROUPS
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -228,7 +228,7 @@ function SelectContent() {
       {/* Character selection */}
       {selectType === "characters" && (
         <div className="game-panel p-4 mb-6">
-          <div className="font-pixel text-xs glow-cyan mb-4">
+          <div className="font-pixel text-[8px] sm:text-xs glow-cyan mb-4">
             ▼ SELECT INDIVIDUAL CHARACTERS
           </div>
           <div className="grid grid-cols-5 md:grid-cols-8 lg:grid-cols-12 gap-2">
@@ -270,7 +270,7 @@ function SelectContent() {
       {selectType === "all" && (
         <div className="game-panel p-6 mb-6 text-center">
           <div
-            className="font-pixel text-xs"
+            className="font-pixel text-[8px] sm:text-xs"
             style={{ color: "var(--text-dim)", marginBottom: "16px" }}
           >
             FULL DUNGEON MODE
@@ -292,7 +292,7 @@ function SelectContent() {
 
       {/* Footer / Start */}
       <div
-        className="fixed bottom-0 left-0 right-0 p-4 flex items-center justify-between"
+        className="fixed bottom-0 left-0 right-0 p-4 flex flex-wrap gap-3 items-center justify-between"
         style={{
           background: "linear-gradient(transparent, var(--bg-dark) 40%)",
           backdropFilter: "blur(4px)",

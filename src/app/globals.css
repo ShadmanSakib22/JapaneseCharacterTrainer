@@ -3,8 +3,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "VT323", monospace;
-  --font-mono: "VT323", monospace;
+  --font-sans: var(--font-vt), monospace;
+  --font-mono: var(--font-vt), monospace;
+  --font-pixel: var(--font-pixel), "Press Start 2P", monospace;
+  --font-orbitron: var(--font-orbitron), "Orbitron", sans-serif;
 }
 
 :root {
@@ -28,7 +30,7 @@
 body {
   background-color: var(--bg-dark);
   color: var(--text-primary);
-  font-family: "VT323", monospace;
+  font-family: var(--font-vt), monospace;
   min-height: 100vh;
 }
 
@@ -110,16 +112,16 @@ body::before {
 
 /* Pixel font headings */
 .font-pixel {
-  font-family: "Press Start 2P", monospace;
+  font-family: var(--font-pixel), monospace;
 }
 
 .font-vt {
-  font-family: "VT323", monospace;
+  font-family: var(--font-vt), monospace;
 }
 
 /* Button styles */
 .btn-game {
-  font-family: "Press Start 2P", monospace;
+  font-family: var(--font-pixel), monospace;
   font-size: 11px;
   background: transparent;
   color: var(--accent-cyan);
@@ -244,7 +246,7 @@ body::before {
   background: rgba(0, 0, 0, 0.5);
   border: 2px solid rgba(0, 255, 255, 0.3);
   color: var(--accent-cyan);
-  font-family: "VT323", monospace;
+  font-family: var(--font-vt), monospace;
   font-size: 20px;
   text-align: center;
   width: 100%;
@@ -452,7 +454,7 @@ body::before {
   position: absolute;
   top: 8px;
   right: 12px;
-  font-family: "Press Start 2P", monospace;
+  font-family: var(--font-pixel), monospace;
   font-size: 7px;
   color: var(--accent-gold);
   text-shadow: 0 0 6px var(--accent-gold);

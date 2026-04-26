@@ -201,7 +201,7 @@ function PlayContent() {
 
   return (
     <div
-      className="min-h-screen p-4"
+      className="min-h-screen p-2 sm:p-4"
       style={{
         backgroundImage:
           "linear-gradient(rgba(0,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.02) 1px, transparent 1px)",
@@ -209,14 +209,42 @@ function PlayContent() {
       }}
     >
       {/* HUD Header */}
-      <div className="game-panel p-3 mb-4 flex items-center justify-between gap-4">
-        <Link href="/practice/select" className="btn-game text-xs px-3 py-2">
-          ◀ SELECT
-        </Link>
+      <div className="game-panel p-2 sm:p-3 mb-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex items-center justify-between sm:justify-start gap-4">
+          <Link
+            href="/practice/select"
+            className="btn-game text-[10px] sm:text-xs px-2 py-2 sm:px-3"
+          >
+            ◀ SELECT
+          </Link>
+
+          <div className="text-center sm:hidden">
+            <div
+              className="font-pixel text-[8px]"
+              style={{ color: "var(--text-dim)" }}
+            >
+              TIME
+            </div>
+            <div className="font-pixel text-lg glow-gold">
+              {formatDuration(duration)}
+            </div>
+          </div>
+        </div>
 
         <div className="flex-1 min-w-0">
-          <div className="font-pixel text-xs mb-1" style={{ color: modeColor }}>
-            {modeLabel} BATTLE
+          <div className="flex items-center justify-between mb-1">
+            <div
+              className="font-pixel text-[10px] sm:text-xs"
+              style={{ color: modeColor }}
+            >
+              {modeLabel} BATTLE
+            </div>
+            <div
+              className="font-vt text-sm sm:hidden"
+              style={{ color: "var(--text-dim)" }}
+            >
+              {answeredCount}/{shuffledChars.length}
+            </div>
           </div>
           <div className="stat-bar w-full">
             <div
@@ -225,44 +253,46 @@ function PlayContent() {
             />
           </div>
           <div
-            className="font-vt text-sm mt-1"
+            className="hidden sm:block font-vt text-sm mt-1"
             style={{ color: "var(--text-dim)" }}
           >
             {answeredCount}/{shuffledChars.length} answered
           </div>
         </div>
 
-        <div className="text-center">
-          <div
-            className="font-pixel text-xs"
-            style={{ color: "var(--text-dim)" }}
-          >
-            TIME
+        <div className="hidden sm:flex items-center gap-4 sm:gap-6">
+          <div className="text-center">
+            <div
+              className="font-pixel text-[10px] sm:text-xs"
+              style={{ color: "var(--text-dim)" }}
+            >
+              TIME
+            </div>
+            <div className="font-pixel text-lg sm:text-xl glow-gold">
+              {formatDuration(duration)}
+            </div>
           </div>
-          <div className="font-pixel text-xl glow-gold">
-            {formatDuration(duration)}
-          </div>
-        </div>
 
-        <div className="text-center hidden md:block">
-          <div
-            className="font-pixel text-xs"
-            style={{ color: "var(--text-dim)" }}
-          >
-            LIVES
-          </div>
-          <div
-            className="font-vt text-2xl"
-            style={{ color: "var(--accent-red)" }}
-          >
-            {"♥".repeat(Math.max(0, 3 - retriesThisSession))}
-            {"♡".repeat(Math.min(3, retriesThisSession))}
+          <div className="text-center hidden md:block">
+            <div
+              className="font-pixel text-[10px] sm:text-xs"
+              style={{ color: "var(--text-dim)" }}
+            >
+              LIVES
+            </div>
+            <div
+              className="font-vt text-2xl"
+              style={{ color: "var(--accent-red)" }}
+            >
+              {"♥".repeat(Math.max(0, 3 - retriesThisSession))}
+              {"♡".repeat(Math.min(3, retriesThisSession))}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Character grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 mb-6">
         {shuffledChars.map((charData, index) => (
           <CharacterInput
             key={charData.id}
@@ -280,23 +310,23 @@ function PlayContent() {
         <div className="flex justify-center">
           <button
             onClick={handleSubmit}
-            className="btn-game btn-game-gold text-sm px-12 py-4"
+            className="btn-game btn-game-gold text-xs sm:text-sm px-6 sm:px-12 py-3 sm:py-4 w-full sm:w-auto"
           >
             ⚔ SUBMIT ANSWERS
           </button>
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="flex gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => triggerReshuffle()}
-              className="btn-game btn-game-magenta text-xs px-8 py-3"
+              className="btn-game btn-game-magenta text-xs px-8 py-3 w-full sm:w-auto"
             >
               ↺ RETRY
             </button>
             <Link
               href="/practice/select"
-              className="btn-game text-xs px-8 py-3"
+              className="btn-game text-xs px-8 py-3 w-full sm:w-auto text-center"
             >
               ◀ NEW QUEST
             </Link>
