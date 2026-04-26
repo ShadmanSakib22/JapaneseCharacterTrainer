@@ -6,7 +6,8 @@ interface AnalyticsProps {
   duration: number;
   correctCount: number;
   wrongCount: number;
-  weakestGroup: string | null;
+  sessionAccuracy: number;
+  accuracyHistory: number[];
   charactersNeedingPractice: { char: string; count: number }[];
   retriesThisSession: number;
   expectedTime: number;
@@ -16,7 +17,8 @@ export default function Analytics({
   duration,
   correctCount,
   wrongCount,
-  weakestGroup,
+  sessionAccuracy,
+  accuracyHistory,
   charactersNeedingPractice,
   retriesThisSession,
   expectedTime,
@@ -33,9 +35,9 @@ export default function Analytics({
 
         <div className="flex items-center gap-2 mb-4">
           {wrongCount === 0 ? (
-            <span className="text-3xl">✓</span>
+            <span className="text-3xl text-success">✓</span>
           ) : (
-            <span className="text-3xl">✗</span>
+            <span className="text-3xl text-error">✗</span>
           )}
           <span className="text-xl">
             You took {formatDuration(duration)}
@@ -49,27 +51,26 @@ export default function Analytics({
 
         <div className="stats stats-vertical shadow w-full">
           <div className="stat">
-            <div className="stat-title">Accuracy</div>
-            <div className="stat-value">{accuracy}%</div>
+            <div className="stat-title">Current Accuracy</div>
+            <div className="stat-value text-primary">{accuracy}%</div>
             <div className="stat-desc">
               {correctCount}/{correctCount + wrongCount} correct
             </div>
+          </div>
+          <div className="stat">
+            <div className="stat-title">Session Accuracy</div>
+            <div className="stat-value text-secondary">{sessionAccuracy}%</div>
+            {accuracyHistory.length > 1 && (
+              <div className="stat-desc mt-1 font-mono">
+                {accuracyHistory.map(a => `${a}%`).join(' | ')}
+              </div>
+            )}
           </div>
           <div className="stat">
             <div className="stat-title">Retries this session</div>
             <div className="stat-value">{retriesThisSession}</div>
           </div>
         </div>
-
-        {weakestGroup && (
-          <>
-            <div className="divider">Weakest Section</div>
-            <div className="bg-error/20 p-3 rounded-lg">
-              <p className="font-semibold">✗ {getGroupDisplayName(weakestGroup)}</p>
-              <p className="text-sm">Most mistakes in this session</p>
-            </div>
-          </>
-        )}
 
         {charactersNeedingPractice.length > 0 && (
           <>

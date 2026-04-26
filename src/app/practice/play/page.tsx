@@ -41,6 +41,9 @@ function PlayContent() {
   const [sessionMistakes, setSessionMistakes] = useState<
     Record<string, number>
   >({});
+  const [sessionCorrect, setSessionCorrect] = useState(0);
+  const [sessionWrong, setSessionWrong] = useState(0);
+  const [accuracyHistory, setAccuracyHistory] = useState<number[]>([]);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const {
@@ -147,6 +150,17 @@ function PlayContent() {
       }
     }
 
+    const currentCorrect =
+      shuffledChars.length - Object.keys(currentMistakes).length;
+    const currentWrong = Object.keys(currentMistakes).length;
+    const currentAccuracy = Math.round(
+      (currentCorrect / (currentCorrect + currentWrong)) * 100,
+    );
+
+    setSessionCorrect((prev) => prev + currentCorrect);
+    setSessionWrong((prev) => prev + currentWrong);
+    setAccuracyHistory((prev) => [...prev, currentAccuracy]);
+
     // Accumulate mistakes for the session view
     setSessionMistakes((prev) => {
       const next = { ...prev };
@@ -162,8 +176,8 @@ function PlayContent() {
       mode: modeParam as "hiragana" | "katakana" | "mixed",
       groups: [...new Set(shuffledChars.map((c) => c.group))],
       duration,
-      correct: shuffledChars.length - Object.keys(currentMistakes).length,
-      wrong: Object.keys(currentMistakes).length,
+      correct: currentCorrect,
+      wrong: currentWrong,
       mistakes: currentMistakes,
     });
   };
@@ -174,22 +188,11 @@ function PlayContent() {
 
   const expectedTime = calculateExpectedTime(shuffledChars.length);
 
-  const groupMistakes: Record<string, number> = {};
-  let weakestGroup: string | null = null;
-  let maxGroupMistakes = 0;
   let correctCount = 0;
-
   for (const charData of shuffledChars) {
     const userInput = inputs[charData.char] || "";
     if (isCorrectAnswer(userInput, charData.romaji)) {
       correctCount++;
-    } else {
-      const groupCount = (groupMistakes[charData.group] || 0) + 1;
-      groupMistakes[charData.group] = groupCount;
-      if (groupCount > maxGroupMistakes) {
-        maxGroupMistakes = groupCount;
-        weakestGroup = charData.group;
-      }
     }
   }
 
@@ -197,6 +200,11 @@ function PlayContent() {
   const charsNeedingPractice = Object.entries(sessionMistakes)
     .map(([char, count]) => ({ char, count }))
     .sort((a, b) => b.count - a.count);
+
+  const sessionAccuracy =
+    sessionCorrect + sessionWrong > 0
+      ? Math.round((sessionCorrect / (sessionCorrect + sessionWrong)) * 100)
+      : 0;
 
   if (!modeParam || shuffledChars.length === 0) {
     return null;
@@ -254,7 +262,8 @@ function PlayContent() {
             duration={duration}
             correctCount={correctCount}
             wrongCount={wrongCount}
-            weakestGroup={weakestGroup}
+            sessionAccuracy={sessionAccuracy}
+            accuracyHistory={accuracyHistory}
             charactersNeedingPractice={charsNeedingPractice}
             retriesThisSession={retriesThisSession}
             expectedTime={expectedTime}
