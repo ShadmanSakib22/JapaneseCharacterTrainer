@@ -1,6 +1,13 @@
 "use client";
 // src/app/practice/play/page.tsx
-import { Suspense, useState, useEffect, useMemo, useRef } from "react";
+import {
+  Suspense,
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  useCallback,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { hiragana } from "../../../data/hiragana";
@@ -50,24 +57,35 @@ function PlayContent() {
     return hiragana;
   }, [modeParam]);
 
-  const practiceCharacters = useMemo(() => {
-    if (!charactersParam) return [];
+  type PracticeCharacter = (typeof hiragana)[0] & { id: string };
+  const [shuffledChars, setShuffledChars] = useState<PracticeCharacter[]>([]);
+
+  const prepareAndShuffle = useCallback((baseChars: typeof hiragana) => {
+    return shuffleArray([...baseChars]).map((c, i) => ({
+      ...c,
+      id: `${c.char}-${Date.now()}-${i}-${Math.random().toString(36).substring(2, 7)}`,
+    }));
+  }, []);
+
+  // Initialize characters on mount or when params change
+  useEffect(() => {
+    if (!charactersParam || allCharacters.length === 0) return;
     try {
       const charStrings: string[] = JSON.parse(charactersParam);
       const filtered = allCharacters.filter((c) =>
         charStrings.includes(c.char),
       );
-      return shuffleArray(filtered);
+      setShuffledChars(prepareAndShuffle(filtered));
     } catch {
-      return [];
+      setShuffledChars([]);
     }
-  }, [charactersParam, allCharacters, shuffleKey]);
+  }, [charactersParam, allCharacters, prepareAndShuffle]);
 
   useEffect(() => {
     // Reset session stats when starting a new practice
     usePracticeStore.getState().resetStore();
 
-    if (!modeParam || !charactersParam || practiceCharacters.length === 0) {
+    if (!modeParam || !charactersParam) {
       router.push("/practice");
       return;
     }
@@ -84,15 +102,18 @@ function PlayContent() {
         intervalRef.current = null;
       }
     };
-  }, []);
+  }, [modeParam, charactersParam, router]);
 
   useEffect(() => {
     if (isReshuffling) {
       setInputs({});
       setIsSubmitted(false);
       setDuration(0);
-      // We don't reset sessionMistakes here to accumulate across retries
       setShuffleKey((k) => k + 1);
+
+      // Explicitly reshuffle and assign new unique IDs
+      setShuffledChars((prev) => prepareAndShuffle(prev));
+
       incrementRetries();
       clearReshuffle();
 
@@ -103,7 +124,7 @@ function PlayContent() {
         setDuration((d) => d + 1);
       }, 1000);
     }
-  }, [isReshuffling, incrementRetries, clearReshuffle]);
+  }, [isReshuffling, incrementRetries, clearReshuffle, prepareAndShuffle]);
 
   const handleInputChange = (char: string, value: string) => {
     setInputs((prev) => ({ ...prev, [char]: value }));
@@ -119,7 +140,7 @@ function PlayContent() {
     incrementAttempts();
 
     const currentMistakes: Record<string, number> = {};
-    for (const charData of practiceCharacters) {
+    for (const charData of shuffledChars) {
       const userInput = inputs[charData.char] || "";
       if (!isCorrectAnswer(userInput, charData.romaji)) {
         currentMistakes[charData.char] = 1;
@@ -139,9 +160,9 @@ function PlayContent() {
       id: generateSessionId(),
       date: new Date().toISOString(),
       mode: modeParam as "hiragana" | "katakana" | "mixed",
-      groups: [...new Set(practiceCharacters.map((c) => c.group))],
+      groups: [...new Set(shuffledChars.map((c) => c.group))],
       duration,
-      correct: practiceCharacters.length - Object.keys(currentMistakes).length,
+      correct: shuffledChars.length - Object.keys(currentMistakes).length,
       wrong: Object.keys(currentMistakes).length,
       mistakes: currentMistakes,
     });
@@ -151,14 +172,14 @@ function PlayContent() {
     triggerReshuffle();
   };
 
-  const expectedTime = calculateExpectedTime(practiceCharacters.length);
+  const expectedTime = calculateExpectedTime(shuffledChars.length);
 
   const groupMistakes: Record<string, number> = {};
   let weakestGroup: string | null = null;
   let maxGroupMistakes = 0;
   let correctCount = 0;
 
-  for (const charData of practiceCharacters) {
+  for (const charData of shuffledChars) {
     const userInput = inputs[charData.char] || "";
     if (isCorrectAnswer(userInput, charData.romaji)) {
       correctCount++;
@@ -172,12 +193,12 @@ function PlayContent() {
     }
   }
 
-  const wrongCount = practiceCharacters.length - correctCount;
+  const wrongCount = shuffledChars.length - correctCount;
   const charsNeedingPractice = Object.entries(sessionMistakes)
     .map(([char, count]) => ({ char, count }))
     .sort((a, b) => b.count - a.count);
 
-  if (!modeParam || practiceCharacters.length === 0) {
+  if (!modeParam || shuffledChars.length === 0) {
     return null;
   }
 
@@ -201,9 +222,9 @@ function PlayContent() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-        {practiceCharacters.map((charData, index) => (
+        {shuffledChars.map((charData, index) => (
           <CharacterInput
-            key={`${shuffleKey}-${charData.char}`}
+            key={charData.id}
             japaneseChar={charData.char}
             correctRomaji={charData.romaji}
             onChange={(value) => handleInputChange(charData.char, value)}
