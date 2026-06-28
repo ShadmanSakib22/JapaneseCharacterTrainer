@@ -189,29 +189,39 @@ export default function PracticePage() {
               </div>
             </button>
 
-            <div className="mode-card disabled p-6 flex flex-col items-center gap-3">
-              <span style={{ fontSize: "56px", lineHeight: 1, opacity: 0.3 }}>
+            <button
+              onClick={() => setSelectedMode("kanji")}
+              className={`mode-card p-6 flex flex-col items-center gap-3 ${selectedMode === "kanji" ? "selected" : ""}`}
+            >
+              <span
+                className="float"
+                style={{ fontSize: "56px", lineHeight: 1, animationDelay: "1.5s" }}
+              >
                 漢
               </span>
               <span
                 className="font-pixel text-xs"
-                style={{ color: "var(--text-dim)" }}
+                style={{
+                  color: "var(--accent-gold)",
+                  textShadow: "0 0 10px var(--accent-gold)",
+                }}
               >
                 KANJI
               </span>
-              <div
-                className="font-vt text-lg"
-                style={{ color: "var(--text-dim)" }}
-              >
-                ???
+              <div className="font-vt text-lg" style={{ color: "var(--text-dim)" }}>
+                Expert
               </div>
-              <div
-                className="font-pixel text-xs"
-                style={{ color: "var(--text-dim)", fontSize: "8px" }}
-              >
-                LOCKED
+              <div className="flex gap-1">
+                {"★★★★★".split("").map((s, i) => (
+                  <span
+                    key={i}
+                    style={{ color: "var(--accent-gold)", fontSize: "12px" }}
+                  >
+                    {s}
+                  </span>
+                ))}
               </div>
-            </div>
+            </button>
           </div>
         </div>
 

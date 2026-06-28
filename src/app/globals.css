@@ -513,6 +513,42 @@ body::before {
   box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
 }
 
+/* Kanji flashcard 3D flip */
+.card-scene {
+  perspective: 1000px;
+}
+
+.card-flipper {
+  position: relative;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.card-flipper.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.card-back-face {
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* pulse text animation for TAP TO REVEAL */
+@keyframes pulse-text {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.pulse-text {
+  animation: pulse-text 1.8s ease-in-out infinite;
+}
+
 /* Corner decorations */
 .corner-decoration {
   position: relative;

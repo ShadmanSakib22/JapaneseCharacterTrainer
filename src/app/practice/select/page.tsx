@@ -3,7 +3,204 @@ import { Suspense, useState, useMemo, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { hiragana, hiraganaGroups } from "../../../data/hiragana";
 import { katakana, katakanaGroups } from "../../../data/katakana";
+import { kanji } from "../../../data/kanji";
 import { getGroupDisplayName, shuffleArray } from "../../../lib/utils";
+import {
+  getKanjiSM2Store,
+  getKanjiGroups,
+  getCardsByGroup,
+  getSeenCount,
+  buildSessionDeck,
+} from "../../../lib/kanjiStorage";
+import { usePracticeStore } from "../../../lib/store";
+
+const RANDOM_SIZES = [25, 50, 100, 200] as const;
+
+function KanjiSelectContent() {
+  const router = useRouter();
+  const { setKanjiDeck } = usePracticeStore();
+
+  const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
+  const [randomSize, setRandomSize] = useState<number | null>(null);
+  const [sm2Store] = useState(() => getKanjiSM2Store());
+
+  const groups = useMemo(() => getKanjiGroups(kanji), []);
+
+  const toggleGroup = (group: string) => {
+    setRandomSize(null);
+    const next = new Set(selectedGroups);
+    if (next.has(group)) next.delete(group);
+    else next.add(group);
+    setSelectedGroups(next);
+  };
+
+  const pickRandomSize = (size: number) => {
+    setSelectedGroups(new Set());
+    setRandomSize(size);
+  };
+
+  const selectedCards = useMemo(() => {
+    if (randomSize !== null) {
+      return buildSessionDeck(kanji, sm2Store).slice(0, randomSize);
+    }
+    const cards = groups
+      .filter((g) => selectedGroups.has(g))
+      .flatMap((g) => getCardsByGroup(kanji, g));
+    return buildSessionDeck(cards, sm2Store);
+  }, [selectedGroups, randomSize, groups, sm2Store]);
+
+  const handleStart = () => {
+    if (selectedCards.length === 0) return;
+    setKanjiDeck(selectedCards);
+    router.push("/kanji/play");
+  };
+
+  return (
+    <div
+      className="min-h-screen p-4 sm:p-6 relative"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(255,215,0,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,0.02) 1px, transparent 1px)",
+        backgroundSize: "40px 40px",
+      }}
+    >
+      {/* Header */}
+      <div className="flex flex-wrap items-center gap-4 mb-8">
+        <button
+          onClick={() => router.push("/practice")}
+          className="btn-game text-[8px] sm:text-xs px-4 py-2"
+        >
+          ◀ BACK
+        </button>
+        <div>
+          <div className="font-pixel text-[8px] sm:text-xs" style={{ color: "var(--text-dim)" }}>
+            DUNGEON SELECT
+          </div>
+          <h1
+            className="font-pixel text-base sm:text-lg"
+            style={{ color: "var(--accent-gold)", textShadow: "0 0 10px var(--accent-gold)" }}
+          >
+            KANJI TRAINING
+          </h1>
+        </div>
+        <div className="ml-auto font-vt text-xl sm:text-2xl" style={{ color: "var(--text-dim)" }}>
+          <span style={{ color: "var(--accent-gold)" }}>{selectedCards.length}</span> / {kanji.length} CARDS
+        </div>
+      </div>
+
+      {/* Random Deck Panel */}
+      <div className="game-panel p-4 mb-6">
+        <div className="font-pixel text-[8px] sm:text-xs glow-gold mb-4">
+          ▼ RANDOM DECK (SM-2 PRIORITY)
+        </div>
+        <div className="grid grid-cols-4 gap-2 sm:gap-3">
+          {RANDOM_SIZES.map((size) => (
+            <button
+              key={size}
+              onClick={() => pickRandomSize(size)}
+              className="py-3 sm:py-4 font-pixel text-xs sm:text-sm transition-all"
+              style={{
+                background: randomSize === size ? "rgba(255,215,0,0.12)" : "transparent",
+                border: `3px solid ${randomSize === size ? "var(--accent-gold)" : "rgba(255,215,0,0.2)"}`,
+                color: randomSize === size ? "var(--accent-gold)" : "var(--text-dim)",
+                boxShadow: randomSize === size ? "0 0 12px rgba(255,215,0,0.4)" : "none",
+              }}
+            >
+              {size}
+            </button>
+          ))}
+        </div>
+        <div className="mt-2 font-pixel text-[8px]" style={{ color: "var(--text-dim)" }}>
+          Picks worst-known + unseen cards first
+        </div>
+      </div>
+
+      {/* Letter Group Picker */}
+      <div className="game-panel p-4 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="font-pixel text-[8px] sm:text-xs glow-cyan">
+            ▼ BY LETTER GROUP
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => { setRandomSize(null); setSelectedGroups(new Set(groups)); }}
+              className="btn-game text-[8px] px-3 py-1"
+            >
+              ALL
+            </button>
+            <button
+              onClick={() => setSelectedGroups(new Set())}
+              className="font-pixel text-[8px] px-3 py-1 transition-all"
+              style={{ border: "2px solid rgba(255,255,255,0.15)", color: "var(--text-dim)", background: "transparent" }}
+            >
+              CLEAR
+            </button>
+          </div>
+        </div>
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
+          {groups.map((group) => {
+            const groupCards = getCardsByGroup(kanji, group);
+            const seen = getSeenCount(group, kanji, sm2Store);
+            const active = selectedGroups.has(group);
+            return (
+              <button
+                key={group}
+                onClick={() => toggleGroup(group)}
+                className="flex flex-col items-center py-3 px-1 transition-all"
+                style={{
+                  background: active ? "rgba(255,215,0,0.08)" : "var(--bg-card)",
+                  border: `2px solid ${active ? "var(--accent-gold)" : "rgba(0,255,255,0.2)"}`,
+                  boxShadow: active ? "0 0 8px rgba(255,215,0,0.3)" : "none",
+                }}
+              >
+                <span
+                  className="font-vt"
+                  style={{
+                    fontSize: "26px",
+                    lineHeight: 1,
+                    color: active ? "var(--accent-gold)" : "var(--text-primary)",
+                  }}
+                >
+                  {group}
+                </span>
+                <span className="font-pixel mt-1" style={{ fontSize: "7px", color: "var(--text-dim)" }}>
+                  {groupCards.length}
+                </span>
+                <span className="font-pixel mt-0.5" style={{ fontSize: "6px", color: active ? "rgba(255,215,0,0.6)" : "rgba(122,122,154,0.6)" }}>
+                  {seen}/{groupCards.length}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div
+        className="fixed bottom-0 left-0 right-0 p-4 flex flex-wrap gap-3 items-center justify-between"
+        style={{
+          background: "linear-gradient(transparent, var(--bg-dark) 40%)",
+          backdropFilter: "blur(4px)",
+        }}
+      >
+        <div className="font-vt text-xl sm:text-2xl">
+          <span className="font-pixel text-sm" style={{ color: "var(--accent-gold)" }}>
+            {selectedCards.length}
+          </span>
+          <span style={{ color: "var(--text-dim)" }}> cards in queue</span>
+        </div>
+        <button
+          onClick={handleStart}
+          disabled={selectedCards.length === 0}
+          className="btn-game btn-game-gold px-8 py-3"
+        >
+          ▶ START REVIEW
+        </button>
+      </div>
+      <div className="h-20" />
+    </div>
+  );
+}
 
 function SelectContent() {
   const router = useRouter();
@@ -12,6 +209,7 @@ function SelectContent() {
     | "hiragana"
     | "katakana"
     | "mixed"
+    | "kanji"
     | null;
 
   const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
@@ -37,6 +235,8 @@ function SelectContent() {
   useEffect(() => {
     if (!mode) router.push("/practice");
   }, [mode, router]);
+
+  if (mode === "kanji") return <KanjiSelectContent />;
 
   const availableCharacters = useMemo(() => {
     if (selectType === "all" || selectType === "characters") return characters;

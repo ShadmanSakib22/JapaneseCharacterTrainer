@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { KanjiWord } from '../data/kanji';
 
 interface PracticeState {
   retriesThisSession: number;
@@ -7,6 +8,9 @@ interface PracticeState {
   triggerReshuffle: () => void;
   clearReshuffle: () => void;
   resetStore: () => void;
+  kanjiDeck: KanjiWord[];
+  setKanjiDeck: (deck: KanjiWord[]) => void;
+  clearKanjiDeck: () => void;
 }
 
 export const usePracticeStore = create<PracticeState>((set) => ({
@@ -21,4 +25,7 @@ export const usePracticeStore = create<PracticeState>((set) => ({
       retriesThisSession: 0,
       isReshuffling: false,
     }),
+  kanjiDeck: [],
+  setKanjiDeck: (deck) => set({ kanjiDeck: deck }),
+  clearKanjiDeck: () => set({ kanjiDeck: [] }),
 }));
