@@ -290,8 +290,8 @@ export default function KanjiPlayPage() {
                   ― KANJI ―
                 </div>
                 <div
-                  className="glow-gold select-none font-vt"
-                  style={{ fontSize: "clamp(72px, 20vw, 120px)", lineHeight: 1 }}
+                  className="select-none font-vt"
+                  style={{ fontSize: "clamp(72px, 20vw, 120px)", lineHeight: 1, color: "var(--accent-gold)" }}
                 >
                   {card?.kanji}
                 </div>
