@@ -513,31 +513,25 @@ body::before {
   box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
 }
 
-/* Kanji flashcard 3D flip */
-.card-scene {
-  perspective: 1000px;
+/* Kanji flashcard swipe animations */
+@keyframes card-enter-up {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
-.card-flipper {
-  position: relative;
-  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-style: preserve-3d;
+@keyframes card-enter-right {
+  from { transform: translateX(60px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
 }
 
-.card-flipper.flipped {
-  transform: rotateY(180deg);
+@keyframes card-exit-left {
+  from { transform: translateX(0);    opacity: 1; }
+  to   { transform: translateX(-60px); opacity: 0; }
 }
 
-.card-face {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-.card-back-face {
-  transform: rotateY(180deg);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
+.anim-enter-up    { animation: card-enter-up    0.28s ease forwards; }
+.anim-enter-right { animation: card-enter-right 0.28s ease forwards; }
+.anim-exit-left   { animation: card-exit-left   0.22s ease forwards; }
 
 /* pulse text animation for TAP TO REVEAL */
 @keyframes pulse-text {
