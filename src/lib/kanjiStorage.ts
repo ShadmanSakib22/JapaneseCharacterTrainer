@@ -97,11 +97,10 @@ export function buildSessionDeck(
     else notDue.push(card);
   }
 
-  // Shuffle within each tier so order is unpredictable,
-  // but SM-2 tiers are still respected (unseen → due → not-due)
   due.sort((a, b) => store[a.kanji].nextReview - store[b.kanji].nextReview);
+  notDue.sort((a, b) => store[a.kanji].easeFactor - store[b.kanji].easeFactor);
 
-  return [...shuffle(unseen), ...shuffle(due), ...shuffle(notDue)];
+  return [...shuffle(unseen), ...shuffle(due), ...notDue];
 }
 
 export function getKanjiGroups(cards: KanjiWord[]): string[] {
