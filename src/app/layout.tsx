@@ -3,6 +3,7 @@ import "./globals.css";
 import { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { ConvexClerkProvider } from "./ConvexClerkProvider";
+import { AuthNav } from "../components/AuthNav";
 
 const pressStart2P = Press_Start_2P({
   subsets: ["latin"],
@@ -39,6 +40,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ConvexClerkProvider>
+          <AuthNav />
           {children}
         </ConvexClerkProvider>
         <Analytics />
