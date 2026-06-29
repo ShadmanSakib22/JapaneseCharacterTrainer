@@ -72,18 +72,36 @@ export function applyGrade(
   };
 }
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export function buildSessionDeck(
   cards: KanjiWord[],
   store: KanjiSM2Store
 ): KanjiWord[] {
-  return [...cards].sort((a, b) => {
-    const sa = store[a.kanji];
-    const sb = store[b.kanji];
-    if (!sa && !sb) return 0;
-    if (!sa) return -1;
-    if (!sb) return 1;
-    return sa.nextReview - sb.nextReview;
-  });
+  const now = Date.now();
+  const unseen: KanjiWord[] = [];
+  const due: KanjiWord[] = [];
+  const notDue: KanjiWord[] = [];
+
+  for (const card of cards) {
+    const state = store[card.kanji];
+    if (!state) unseen.push(card);
+    else if (state.nextReview <= now) due.push(card);
+    else notDue.push(card);
+  }
+
+  // Shuffle within each tier so order is unpredictable,
+  // but SM-2 tiers are still respected (unseen → due → not-due)
+  due.sort((a, b) => store[a.kanji].nextReview - store[b.kanji].nextReview);
+
+  return [...shuffle(unseen), ...shuffle(due), ...shuffle(notDue)];
 }
 
 export function getKanjiGroups(cards: KanjiWord[]): string[] {
