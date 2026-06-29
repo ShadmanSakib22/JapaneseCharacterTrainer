@@ -13,7 +13,7 @@ export function AuthNav() {
   const { signOut, openSignIn } = useClerk();
   const [syncState, setSyncState] = useState<SyncState>("idle");
 
-  const rawRemote = useQuery(isSignedIn ? api.progress.getProgress : "skip") ?? [];
+  const rawRemote = useQuery(api.progress.getProgress, isSignedIn ? {} : "skip") ?? [];
   const remoteCards = rawRemote.map(({ kanji, interval, easeFactor, repetitions, nextReview, lastReview }) => ({
     kanji, interval, easeFactor, repetitions, nextReview, lastReview,
   }));
