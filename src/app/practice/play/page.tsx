@@ -318,12 +318,21 @@ function PlayContent() {
       ) : (
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button
-              onClick={() => triggerReshuffle()}
-              className="btn-game btn-game-magenta text-xs px-8 py-3 w-full sm:w-auto"
-            >
-              ↺ RETRY
-            </button>
+            {retriesThisSession < 3 ? (
+              <button
+                onClick={() => triggerReshuffle()}
+                className="btn-game btn-game-magenta text-xs px-8 py-3 w-full sm:w-auto"
+              >
+                ↺ RETRY ({3 - retriesThisSession} {3 - retriesThisSession === 1 ? "LIFE" : "LIVES"} LEFT)
+              </button>
+            ) : (
+              <div
+                className="font-pixel text-xs px-8 py-3 w-full sm:w-auto text-center"
+                style={{ color: "var(--accent-red)", textShadow: "0 0 8px var(--accent-red)" }}
+              >
+                ✕ NO LIVES REMAINING
+              </div>
+            )}
             <Link
               href="/practice/select"
               className="btn-game text-xs px-8 py-3 w-full sm:w-auto text-center"

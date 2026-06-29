@@ -192,7 +192,7 @@ export default function Analytics({
         {accuracyHistory.length > 1 && (
           <div className="mt-4">
             <div
-              className="font-pixel text-xs mb-2"
+              className="font-pixel text-xs mb-2 pb-6"
               style={{ color: "var(--text-dim)" }}
             >
               ACCURACY HISTORY

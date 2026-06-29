@@ -13,11 +13,14 @@ export function AuthNav() {
   const { signOut, openSignIn } = useClerk();
   const [syncState, setSyncState] = useState<SyncState>("idle");
 
-  const rawRemote = useQuery(api.progress.getProgress, isSignedIn ? {} : "skip") ?? [];
+  type CardRow = { kanji: string; interval: number; easeFactor: number; repetitions: number; nextReview: number; lastReview: number };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const convexApi = api as any;
+  const rawRemote = (useQuery(convexApi.progress.getProgress, isSignedIn ? {} : "skip") ?? []) as CardRow[];
   const remoteCards = rawRemote.map(({ kanji, interval, easeFactor, repetitions, nextReview, lastReview }) => ({
     kanji, interval, easeFactor, repetitions, nextReview, lastReview,
   }));
-  const upsertProgress = useMutation(api.progress.upsertProgress);
+  const upsertProgress = useMutation(convexApi.progress.upsertProgress);
 
   async function handleSync() {
     if (syncState !== "idle") return;
@@ -39,9 +42,9 @@ export function AuthNav() {
 
   const syncLabel =
     syncState === "syncing" ? "SYNCING..." :
-    syncState === "done" ? "SYNCED ✓" :
-    syncState === "error" ? "SYNC FAILED" :
-    "SYNC PROGRESS";
+      syncState === "done" ? "SYNCED ✓" :
+        syncState === "error" ? "SYNC FAILED" :
+          "SYNC PROGRESS";
 
   return (
     <div
@@ -58,7 +61,7 @@ export function AuthNav() {
       {isSignedIn ? (
         <>
           <span
-            className="font-pixel"
+            className="font-pixel hidden sm:flex"
             style={{ fontSize: "7px", color: "var(--text-dim)" }}
           >
             {user?.primaryEmailAddress?.emailAddress ?? user?.username ?? "USER"}
@@ -81,12 +84,12 @@ export function AuthNav() {
           </button>
           <button
             onClick={() => signOut()}
-            className="font-pixel"
+            className="font-pixel border px-[8px] py-[3px]"
             style={{
               fontSize: "7px",
               color: "var(--text-dim)",
               background: "none",
-              border: "none",
+              // border: "none",
               cursor: "pointer",
             }}
           >

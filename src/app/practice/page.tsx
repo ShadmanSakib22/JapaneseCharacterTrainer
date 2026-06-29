@@ -40,24 +40,6 @@ export default function PracticePage() {
           >
             Japanese Character Training Simulator
           </div>
-          <div className="mt-4 flex items-center justify-center gap-2">
-            <span className="glow-cyan font-pixel text-xs">LVL 1</span>
-            <div className="stat-bar w-32">
-              <div
-                className="stat-bar-fill bar-cyan"
-                style={{ width: "15%" }}
-              />
-            </div>
-            <span
-              style={{
-                color: "var(--text-dim)",
-                fontFamily: "VT323",
-                fontSize: "18px",
-              }}
-            >
-              15 / 100 XP
-            </span>
-          </div>
         </div>
 
         {/* Mode selection */}
@@ -70,12 +52,11 @@ export default function PracticePage() {
               onClick={() => setSelectedMode("hiragana")}
               className={`mode-card p-6 flex flex-col items-center gap-3 ${selectedMode === "hiragana" ? "selected" : ""}`}
             >
-              <span
-                className="float"
-                style={{ fontSize: "56px", lineHeight: 1 }}
-              >
-                あ
-              </span>
+              <div className="flex items-center justify-center" style={{ height: "64px" }}>
+                <span className="float" style={{ fontSize: "56px", lineHeight: 1 }}>
+                  あ
+                </span>
+              </div>
               <span className="font-pixel text-xs glow-cyan">HIRAGANA</span>
               <div
                 className="font-vt text-lg"
@@ -103,16 +84,11 @@ export default function PracticePage() {
               onClick={() => setSelectedMode("katakana")}
               className={`mode-card p-6 flex flex-col items-center gap-3 ${selectedMode === "katakana" ? "selected" : ""}`}
             >
-              <span
-                className="float"
-                style={{
-                  fontSize: "56px",
-                  lineHeight: 1,
-                  animationDelay: "0.5s",
-                }}
-              >
-                ア
-              </span>
+              <div className="flex items-center justify-center" style={{ height: "64px" }}>
+                <span className="float" style={{ fontSize: "56px", lineHeight: 1, animationDelay: "0.5s" }}>
+                  ア
+                </span>
+              </div>
               <span
                 className="font-pixel text-xs"
                 style={{
@@ -148,16 +124,11 @@ export default function PracticePage() {
               onClick={() => setSelectedMode("mixed")}
               className={`mode-card p-6 flex flex-col items-center gap-3 ${selectedMode === "mixed" ? "selected" : ""}`}
             >
-              <span
-                className="float"
-                style={{
-                  fontSize: "40px",
-                  lineHeight: 1,
-                  animationDelay: "1s",
-                }}
-              >
-                あア
-              </span>
+              <div className="flex items-center justify-center" style={{ height: "64px" }}>
+                <span className="float" style={{ fontSize: "40px", lineHeight: 1, animationDelay: "1s" }}>
+                  あア
+                </span>
+              </div>
               <span
                 className="font-pixel text-xs"
                 style={{
@@ -193,12 +164,11 @@ export default function PracticePage() {
               onClick={() => setSelectedMode("kanji")}
               className={`mode-card p-6 flex flex-col items-center gap-3 ${selectedMode === "kanji" ? "selected" : ""}`}
             >
-              <span
-                className="float"
-                style={{ fontSize: "56px", lineHeight: 1, animationDelay: "1.5s" }}
-              >
-                漢
-              </span>
+              <div className="flex items-center justify-center" style={{ height: "64px" }}>
+                <span className="float" style={{ fontSize: "56px", lineHeight: 1, animationDelay: "1.5s" }}>
+                  漢
+                </span>
+              </div>
               <span
                 className="font-pixel text-xs"
                 style={{
@@ -250,7 +220,7 @@ export default function PracticePage() {
         SYS:OK
       </div>
       <div className="absolute top-4 right-4 font-pixel text-xs glow-cyan opacity-40">
-        VER 1.0.0
+        VER 1.2.0
       </div>
       <div
         className="absolute bottom-4 left-4 font-vt text-lg"
