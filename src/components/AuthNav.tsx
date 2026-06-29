@@ -6,14 +6,14 @@ import { useState } from "react";
 import { getKanjiSM2Store, saveKanjiSM2Store } from "../lib/kanjiStorage";
 import { mergeSyncProgress } from "../lib/syncProgress";
 
-type SyncState = "idle" | "syncing" | "done";
+type SyncState = "idle" | "syncing" | "done" | "error";
 
 export function AuthNav() {
   const { isSignedIn, user } = useUser();
   const { signOut, openSignIn } = useClerk();
   const [syncState, setSyncState] = useState<SyncState>("idle");
 
-  const rawRemote = useQuery(api.progress.getProgress) ?? [];
+  const rawRemote = useQuery(isSignedIn ? api.progress.getProgress : "skip") ?? [];
   const remoteCards = rawRemote.map(({ kanji, interval, easeFactor, repetitions, nextReview, lastReview }) => ({
     kanji, interval, easeFactor, repetitions, nextReview, lastReview,
   }));
@@ -32,12 +32,16 @@ export function AuthNav() {
       setSyncState("done");
       setTimeout(() => setSyncState("idle"), 2000);
     } catch {
-      setSyncState("idle");
+      setSyncState("error");
+      setTimeout(() => setSyncState("idle"), 2000);
     }
   }
 
   const syncLabel =
-    syncState === "syncing" ? "SYNCING..." : syncState === "done" ? "SYNCED ✓" : "SYNC PROGRESS";
+    syncState === "syncing" ? "SYNCING..." :
+    syncState === "done" ? "SYNCED ✓" :
+    syncState === "error" ? "SYNC FAILED" :
+    "SYNC PROGRESS";
 
   return (
     <div
@@ -65,7 +69,7 @@ export function AuthNav() {
             className="font-pixel"
             style={{
               fontSize: "7px",
-              color: syncState === "done" ? "var(--accent-green)" : "var(--accent-gold)",
+              color: syncState === "done" ? "var(--accent-green)" : syncState === "error" ? "var(--accent-red)" : "var(--accent-gold)",
               background: "none",
               border: "1px solid currentColor",
               padding: "3px 8px",
