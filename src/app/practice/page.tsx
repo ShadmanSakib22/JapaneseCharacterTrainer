@@ -32,7 +32,7 @@ export default function PracticePage() {
             ― PRESS START ―
           </div>
           <h1 className="font-pixel text-3xl md:text-4xl glow-gold mb-3 leading-relaxed">
-            KANA QUEST
+            Moji Crawler
           </h1>
           <div
             className="font-vt text-xl sm:text-2xl"
@@ -256,7 +256,7 @@ export default function PracticePage() {
         className="absolute bottom-4 left-4 font-vt text-lg"
         style={{ color: "var(--text-dim)" }}
       >
-        © KANA QUEST
+        © MOJI CRAWLER
       </div>
       <div
         className="absolute bottom-4 right-4 font-pixel text-xs opacity-40"

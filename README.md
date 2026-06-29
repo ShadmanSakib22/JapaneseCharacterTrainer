@@ -1,36 +1,14 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Moji Crawler
 
-## Getting Started
+A web app for learning Japanese scripts — hiragana, katakana, and kanji — with a retro pixel-art aesthetic styled like a classic RPG dungeon crawler.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Three writing systems** — practice hiragana, katakana, mixed mode, or kanji flashcards
+- **Smart spaced repetition** — the kanji mode uses the SM-2 algorithm, prioritizing cards you've forgotten or found hard so your study time goes where it matters most
+- **Flexible session setup** — pick characters by group, select individually, or grab a random deck (25, 50, 100, or 200 cards); your progress is shown per group so you always know what you've covered
+- **Honest self-grading** — after each kanji card, grade yourself as Forgot / Hard / Medium / Easy; the algorithm schedules your next review accordingly
+- **Retry weak cards** — at the end of a session, jump straight back into the cards that gave you trouble
+- **Retro game UI** — pixel fonts, neon glow effects, and dungeon-crawl framing make studying feel more like a game than a chore
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Built with** Next.js 16, React 19, TypeScript, Tailwind CSS, and Zustand for state management.

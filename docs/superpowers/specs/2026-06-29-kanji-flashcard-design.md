@@ -6,7 +6,7 @@
 
 ## Overview
 
-Add an Anki-style kanji flashcard mode to KANA QUEST using SM-2 spaced repetition. Cards are selected by letter group or random deck size, studied one at a time with flip-to-reveal, and graded Easy / Medium / Hard / Forgot. SM-2 state persists in localStorage. Auth and a real DB are deferred — the storage layer is isolated so migration to Convex later is a one-afternoon job.
+Add an Anki-style kanji flashcard mode to Moji Crawler using SM-2 spaced repetition. Cards are selected by letter group or random deck size, studied one at a time with flip-to-reveal, and graded Easy / Medium / Hard / Forgot. SM-2 state persists in localStorage. Auth and a real DB are deferred — the storage layer is isolated so migration to Convex later is a one-afternoon job.
 
 ---
 

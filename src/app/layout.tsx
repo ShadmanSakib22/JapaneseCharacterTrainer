@@ -22,7 +22,7 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  title: "KANA QUEST — Japanese Character Trainer",
+  title: "MOJI CRAWLER — Japanese Character Trainer",
   description: "Master Japanese characters in a retro RPG adventure",
 };
 
