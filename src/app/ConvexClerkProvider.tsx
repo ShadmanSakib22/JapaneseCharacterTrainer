@@ -1,6 +1,7 @@
 // src/app/ConvexClerkProvider.tsx
 "use client";
 import { ClerkProvider, useAuth } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
 
@@ -13,13 +14,28 @@ export function ConvexClerkProvider({ children }: { children: React.ReactNode })
   return (
     <ClerkProvider
       appearance={{
+        // Corrected property name from 'baseTheme' to 'theme'
+        theme: dark,
         variables: {
-          // colorBackground: '#0a0a0f30',
           colorPrimary: '#ffd700',
           colorDanger: '#ff3366',
+          colorSuccess: '#00ff88',
+          colorWarning: '#ff00ff',
+          colorBackground: '#0a0a0f',
+          colorForeground: '#e8e8f0',
+          colorMutedForeground: '#7a7a9a',
           borderRadius: '4px',
           fontFamily: '"VT323", monospace',
           fontSize: '16px',
+        },
+        elements: {
+          formFieldInput: {
+            backgroundColor: '#111118',
+            borderColor: 'rgba(0, 255, 255, 0.4)',
+          },
+          card: {
+            backgroundColor: '#1a1a2e',
+          },
         },
       }}
     >
